@@ -1,6 +1,9 @@
 ﻿using Fasseto.Word.Web.Server;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Fasseto.Word.Web.Server.Controllers
 {
@@ -13,6 +16,16 @@ namespace Fasseto.Word.Web.Server.Controllers
         /// </summary>
         protected ApplicationDBContext mDbcontext;
 
+        /// <summary>
+        /// The Manager for handling users, creation, deletion, roles, searching...
+        /// </summary>
+        protected UserManager<ApplicationUser> mUserManager;
+
+        /// <summary>
+        /// The manager for handling signing in and out of users
+        /// </summary>
+        protected SignInManager<ApplicationUser> mSignInManager;
+
         #endregion
 
         #region Constructor
@@ -20,10 +33,16 @@ namespace Fasseto.Word.Web.Server.Controllers
         /// <summary>
         /// Default Constructor
         /// </summary>
-        /// <param name="context"></param>
-        public HomeController(ApplicationDBContext context)
+        /// <param name="context">Database Context Connection</param>
+        /// <param name="userManager">Manager for users</param>
+        /// <param name="signInManager">Manager for signing in/out of users</param>
+        public HomeController(ApplicationDBContext context, 
+                              UserManager<ApplicationUser> userManager,
+                              SignInManager<ApplicationUser> signInManager)
         {
             mDbcontext = context;
+            mUserManager = userManager;
+            mSignInManager = signInManager;
         }
 
         #endregion
@@ -65,6 +84,63 @@ namespace Fasseto.Word.Web.Server.Controllers
             #endregion
 
             return View();
+        }
+
+        /// <summary>
+        /// Create a single user for now
+        /// </summary>
+        /// <returns></returns>
+        [Route("create")]
+        public async Task<IActionResult> CreateUserAsync()
+        {
+            var result = await mUserManager.CreateAsync(new ApplicationUser()
+            {
+                UserName = "Dimitri",
+                Email = "dimon2255@inbox.ru",
+            }, "password");
+
+            if(result.Succeeded)
+               return Content("User was created", "text/html");
+
+            return Content("Unable to create User", "text/html");
+        }
+
+        //Private Area
+        [Authorize]
+        [Route("private")]
+        public IActionResult Private()
+        {
+            return Content($"This is a private area. Welcome {HttpContext.User.Identity.Name}", "text/html");
+        }
+
+        [Route("logout")]
+        public async Task<IActionResult> SignOutAsync()
+        {
+            await mSignInManager.SignOutAsync();
+            return Content("done");
+        }
+
+        /// <summary>
+        ///Auto-Login Page
+        /// </summary>
+        /// <param name="returnUrl">If login successful, URL to return to</param>
+        /// <returns></returns>
+        [Route("login")]
+        public async Task<IActionResult> Login(string returnUrl)
+        {
+            var result = await mSignInManager.PasswordSignInAsync("Dimitri" , "password", true, false);
+
+            if (result.Succeeded)
+            {
+                //We have no return URL
+                if (string.IsNullOrEmpty(returnUrl))
+                    return RedirectToAction(nameof(Index));
+
+                //Otherwise, go to the return URL
+                return Redirect(returnUrl);
+            }
+
+            return Content("Testing", "text/html");
         }
 
         #endregion

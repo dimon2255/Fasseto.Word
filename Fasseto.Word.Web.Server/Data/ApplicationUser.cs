@@ -11,5 +11,6 @@ namespace Fasseto.Word.Web.Server
     /// </summary>
     public class ApplicationUser : IdentityUser
     {
+
     }
 }

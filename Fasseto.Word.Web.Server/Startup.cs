@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -37,17 +38,50 @@ namespace Fasseto.Word.Web.Server
 
             //Add Identity, Adds cookie based authentication
             //Adds scoped classes for things like UserManager, SignInManager, PasswordHashers etc...
-            //NOTE: Automatically adds the validated user to the Idento
-            services.AddIdentity<ApplicationIdentity, IdentityRole>();
+            //NOTE: Automatically adds the validated user to the Identity 
+            services.AddIdentity<ApplicationUser, IdentityRole>()
 
+                    //Adds UserStore and RoleStore from this context
+                    .AddEntityFrameworkStores<ApplicationDBContext>()
+
+                    //Adds a provider that generates unique keys and hashes for things
+                    //forgot password links, phone number verification codes and so on...
+                    .AddDefaultTokenProviders();
+
+            //Change Password Policy
+            services.Configure<IdentityOptions>(options =>
+            {
+                //Make really weak passwords possible
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 5;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+            });
+
+
+            //Alter application cookie info
+            services.ConfigureApplicationCookie(options =>
+            {
+                //redirect user to login action
+                options.LoginPath = "/login";
+
+                // Change cookie timeout
+                options.ExpireTimeSpan = TimeSpan.FromSeconds(15);
+            });                    
+                    
+            //Adds MVC Framework Compatible with .NET Core 2.2 version
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
         {
-            //IoCContainer.Provider = serviceProvider;
+            IoCContainer.Provider = serviceProvider;
 
+            //Setup Identity 
+            app.UseAuthentication();
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
