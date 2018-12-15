@@ -17,4 +17,9 @@
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <ProjectReference Include="..\Fasseto.Word.Core\Fasseto.Word.Core.csproj" />
+  </ItemGroup>
+
 </Project>

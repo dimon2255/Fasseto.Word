@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Text;
 
 namespace Fasseto.Word.Web.Server
 {
@@ -15,10 +17,8 @@ namespace Fasseto.Word.Web.Server
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            IoC.Configuration = configuration;
         }
-
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -33,7 +33,7 @@ namespace Fasseto.Word.Web.Server
             //Add ApplicationDBContext to a dependency injection
             services.AddDbContext<ApplicationDBContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+                options.UseSqlServer(IoC.Configuration.GetConnectionString("DefaultConnection"));
             });
 
             //Add Identity, Adds cookie based authentication
@@ -47,6 +47,22 @@ namespace Fasseto.Word.Web.Server
                     //Adds a provider that generates unique keys and hashes for things
                     //forgot password links, phone number verification codes and so on...
                     .AddDefaultTokenProviders();
+
+            //Add JWT Authentication for API clients
+            services.AddAuthentication()
+                    .AddJwtBearer(options =>
+                    {
+                        options.TokenValidationParameters = new TokenValidationParameters()
+                        {
+                            ValidateIssuer = true,
+                            ValidateAudience = true,
+                            ValidateLifetime = true,
+                            ValidateIssuerSigningKey = true,
+                            ValidIssuer = IoC.Configuration["Jwt:Issuer"],
+                            ValidAudience = IoC.Configuration["Jwt:Audience"],
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(IoC.Configuration["Jwt:SecretKey"]))
+                        };
+                    });
 
             //Change Password Policy
             services.Configure<IdentityOptions>(options =>
@@ -67,7 +83,7 @@ namespace Fasseto.Word.Web.Server
                 options.LoginPath = "/login";
 
                 // Change cookie timeout
-                options.ExpireTimeSpan = TimeSpan.FromSeconds(15);
+                options.ExpireTimeSpan = TimeSpan.FromSeconds(1500);
             });                    
                     
             //Adds MVC Framework Compatible with .NET Core 2.2 version
@@ -77,7 +93,8 @@ namespace Fasseto.Word.Web.Server
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
         {
-            IoCContainer.Provider = serviceProvider;
+            //Pass the IServiceProvider reference for use in the whole application
+            IoC.Provider = serviceProvider;
 
             //Setup Identity 
             app.UseAuthentication();

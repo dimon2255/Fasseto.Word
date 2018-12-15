@@ -1,4 +1,5 @@
 ﻿using Fasseto.Word.Web.Server;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -95,8 +96,10 @@ namespace Fasseto.Word.Web.Server.Controllers
         {
             var result = await mUserManager.CreateAsync(new ApplicationUser()
             {
-                UserName = "Dimitri",
+                UserName = "dimon2255",
                 Email = "dimon2255@inbox.ru",
+                Firstname = "Dimitri",
+                Lastname = "Pankov"
             }, "password");
 
             if(result.Succeeded)
@@ -105,14 +108,22 @@ namespace Fasseto.Word.Web.Server.Controllers
             return Content("Unable to create User", "text/html");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         //Private Area
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Route("private")]
         public IActionResult Private()
         {
             return Content($"This is a private area. Welcome {HttpContext.User.Identity.Name}", "text/html");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [Route("logout")]
         public async Task<IActionResult> SignOutAsync()
         {
@@ -126,8 +137,12 @@ namespace Fasseto.Word.Web.Server.Controllers
         /// <param name="returnUrl">If login successful, URL to return to</param>
         /// <returns></returns>
         [Route("login")]
-        public async Task<IActionResult> Login(string returnUrl)
+        public async Task<IActionResult> LoginAsyn(string returnUrl)
         {
+            //Sign out user
+            await mSignInManager.SignOutAsync();
+
+            //try signing in the user
             var result = await mSignInManager.PasswordSignInAsync("Dimitri" , "password", true, false);
 
             if (result.Succeeded)

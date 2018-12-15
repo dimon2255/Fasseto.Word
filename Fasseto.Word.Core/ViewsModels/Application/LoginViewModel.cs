@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Dna;
+using System;
 using System.Security;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 
 namespace Fasseto.Word.Core
@@ -24,13 +24,13 @@ namespace Fasseto.Word.Core
         public SecureString Password { get; set; }
 
         /// <summary>
-        /// Indicates whetther the login command is running its action asynchronously
+        /// Indicates whether the login command is running its action asynchronously
         /// </summary>
         public bool IsLoginRunning { get; set; }
 
 
         #endregion
-
+        
         #region Commands
 
         /// <summary>
@@ -64,13 +64,37 @@ namespace Fasseto.Word.Core
         /// <returns></returns>
         public async Task LoginAsync(object parameter)
         {
+
+
             await RunCommand(() => this.IsLoginRunning, async () =>
             {
-                await Task.Delay(1000);
 
-                //Succcesfully logged in
-                //TODO: Ask server for user's info
+                //Call the server and attempt to login with credentials
+                //TODO: Move all URLs and API routes to static class
+                var result = await WebRequests.PostAsync<ApiResponse<LoginCredentialsApiModel>>
+                                                    (
+                                                 "http://localhost:5000/api/login",
+                                                 new LoginCredentialsApiModel()
+                                                 {
+                                                     UsernameOrEmail = Email,
+                                                     Password = (parameter as IHavePassword).SecurePassword.Unsecure()
+                                                 });
 
+                //If there was no response, bad data or a response with an error message
+                if(result == null || result.ServerResponse == null || !result.ServerResponse.Successful)
+                {
+                    var message = default(string);
+
+                    if (result?.ServerResponse != null)
+                        message = result.ServerResponse.ErrorMessage;
+                    
+
+                }
+
+
+ //               return;
+
+                //Successfully logged in
                 IoC.Settings.Firstname = new TextEntryViewModel()
                 {
                     Label = "Firstname",
