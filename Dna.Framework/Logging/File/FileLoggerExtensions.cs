@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Dna
 {
@@ -24,6 +25,22 @@ namespace Dna
 
             //Return the builder
             return builder;
+        }
+
+        /// <summary>
+        /// Injects a new file logger to a specific logPath for <see cref="FileLogger"/>
+        /// </summary>
+        /// <param name="construction">The construction</param>
+        /// <param name="logPath">The path where to write to</param>
+        /// <returns><see cref="FrameworkConstruction"/></returns>
+        public static FrameworkConstruction UseFileLogger(this FrameworkConstruction construction, string logPath = "log.txt")
+        {
+            construction.Services.AddLogging(options =>
+            {
+                options.AddFile(logPath);
+            });
+
+            return construction; 
         }
     }
 }

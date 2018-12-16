@@ -23,7 +23,7 @@ namespace Fasseto.Word
 
             //Log it
             IoC.Logger.Log("Application starting...", LogLevel.Debug);
-
+            object 
 
             //Show the main window
             Current.MainWindow = new Dialog();
@@ -36,18 +36,12 @@ namespace Fasseto.Word
         private void ApplicationSetup()
         {
             //Setup Dna Framework
-            Framework.Startup();
+            new DefaultFrameworkConstruction()
+                .UseFileLogger()
+                .Build();
 
             // Setup IoC
             IoC.Setup();
-
-            //Bind a logger
-            IoC.Kernel.Bind<ILogFactory>().ToConstant(new BaseLogFactory(new[]
-            {
-                //TODO: Add AppicationSettings so we can set/edit a log location
-                //      for now just log to the path where this application is running
-                 new Core.FileLogger("OldLog.txt")
-            }));
 
             //Bind a TaskManager
             IoC.Kernel.Bind<ITaskManager>().ToConstant(new TaskManager());

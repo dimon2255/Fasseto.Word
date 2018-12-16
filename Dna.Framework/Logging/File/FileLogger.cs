@@ -92,7 +92,7 @@ namespace Dna
             //Get the formatted message
             var message = formatter(state, exception);
 
-            var output = $"[{currentTime}]  {message}{Environment.NewLine}";
+            var output = $"[{currentTime}]  {message}";
 
             //Normalize and Absolute the path
             //TODO: Make use of configuration base path
