@@ -1,5 +1,4 @@
-﻿using Dna;
-using System;
+﻿using System;
 using System.Security;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -43,7 +42,6 @@ namespace Fasseto.Word.Core
 
         #endregion
 
-
         #region Constructor
 
         /// <summary>
@@ -66,33 +64,9 @@ namespace Fasseto.Word.Core
         {
 
 
-            await RunCommand(() => this.IsLoginRunning, async () =>
+            await RunCommand(() => this.IsLoginRunning, async() =>
             {
-
-                //Call the server and attempt to login with credentials
-                //TODO: Move all URLs and API routes to static class
-                var result = await WebRequests.PostAsync<ApiResponse<LoginCredentialsApiModel>>
-                                                    (
-                                                 "http://localhost:5000/api/login",
-                                                 new LoginCredentialsApiModel()
-                                                 {
-                                                     UsernameOrEmail = Email,
-                                                     Password = (parameter as IHavePassword).SecurePassword.Unsecure()
-                                                 });
-
-                //If there was no response, bad data or a response with an error message
-                if(result == null || result.ServerResponse == null || !result.ServerResponse.Successful)
-                {
-                    var message = default(string);
-
-                    if (result?.ServerResponse != null)
-                        message = result.ServerResponse.ErrorMessage;
-                    
-
-                }
-
-
- //               return;
+                await Task.Delay(1000);
 
                 //Successfully logged in
                 IoC.Settings.Firstname = new TextEntryViewModel()

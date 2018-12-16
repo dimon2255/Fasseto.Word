@@ -81,7 +81,7 @@ namespace Fasseto.Word.Core
         }
 
         /// <summary>
-        /// Removes the soecified logger from  this factory
+        /// Removes the specified logger from  this factory
         /// </summary>
         /// <param name="logger">The logger</param>
         public void RemoveLogger(ILogger logger)
@@ -97,7 +97,7 @@ namespace Fasseto.Word.Core
         /// Logs the specific message to all loggers in this factory
         /// </summary>
         /// <param name="message">Message to log</param>
-        /// <param name="level">The level of message everity</param>
+        /// <param name="level">The level of message severity</param>
         /// <param name="origin">The method/function this message was logged in</param>
         /// <param name="filepath">The code filename that this message was logged from</param>
         /// <param name="lineNumber">The line of code in the filename this message was logged from</param>
@@ -107,19 +107,19 @@ namespace Fasseto.Word.Core
                         [CallerFilePath]string filepath = "", 
                         [CallerLineNumber]int lineNumber = 0)
         {
-            //Obey Logoutput Level
+            //Obey Log output Level
             if ((int)level < (int)LogOutputLevel)
                 return;
 
             if (IncludeLogOriginDetails)
             {
-                message = $" {message}[{Path.GetFileName(filepath)} > {origin}() > Line {lineNumber}]{System.Environment.NewLine}";
+                message = $" {message}[{Path.GetFileName(filepath)} > {origin}() > Line {lineNumber}]{Environment.NewLine}";
             }
 
             //Log to all loggers
             mLoggers.ForEach(logger => logger.Log(message, level));
 
-            //Notofy all listeners
+            //Notify all listeners
             NewLog.Invoke((message, level));
         }
 

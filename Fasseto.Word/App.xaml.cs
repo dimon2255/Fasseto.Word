@@ -1,4 +1,5 @@
-﻿using Fasseto.Word.Core;
+﻿using Dna;
+using Fasseto.Word.Core;
 using System;
 using System.Windows;
 
@@ -34,15 +35,18 @@ namespace Fasseto.Word
         /// </summary>
         private void ApplicationSetup()
         {
+            //Setup Dna Framework
+            Framework.Startup();
+
             // Setup IoC
             IoC.Setup();
 
             //Bind a logger
-            IoC.Kernel.Bind<ILogFactory>().ToConstant(new BaseLogFactory( new[]
+            IoC.Kernel.Bind<ILogFactory>().ToConstant(new BaseLogFactory(new[]
             {
                 //TODO: Add AppicationSettings so we can set/edit a log location
                 //      for now just log to the path where this application is running
-                 new FileLogger("Log.txt")
+                 new Core.FileLogger("OldLog.txt")
             }));
 
             //Bind a TaskManager
