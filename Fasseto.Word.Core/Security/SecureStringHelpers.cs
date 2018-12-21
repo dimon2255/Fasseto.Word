@@ -11,7 +11,7 @@ namespace Fasseto.Word.Core
     public static class SecureStringHelpers
     {
         /// <summary>
-        /// Unsecures <see cref="SecureString"> to plain text
+        /// Unsecured <see cref="SecureString"> to plain text
         /// </summary>
         /// <param name="securePassword">the SecureString</param>
         /// <returns></returns>
@@ -24,7 +24,7 @@ namespace Fasseto.Word.Core
             var unmanagedString = IntPtr.Zero;
             try
             {
-                //Unsercures
+                //Unsecured
                 unmanagedString = Marshal.SecureStringToGlobalAllocUnicode(securePassword);
                 return Marshal.PtrToStringUni(unmanagedString);
             }

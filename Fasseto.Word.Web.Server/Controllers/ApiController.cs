@@ -1,11 +1,10 @@
 ﻿using Fasseto.Word.Core;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -55,10 +54,86 @@ namespace Fasseto.Word.Web.Server
 
         #endregion
 
+
+        #region API Actions
+
         /// <summary>
-        /// Issues unique token for user
+        /// Tries to register a new account on the server
         /// </summary>
-        /// <returns></returns>
+        /// <param name="registerCredentails">The registration details</param>
+        /// <returns>Returns the result of the register request</returns>
+        [Route("api/register")]
+        public async Task<ApiResponse<RegisterResultApiModel>> RegisterAsync([FromBody] RegisterCredentialsApiModel registerCredentials)
+        {
+            var errorMessage = "Please provide all required details to register to an account";
+
+            //Default Error Message
+            var errorResponse = new ApiResponse<RegisterResultApiModel>()
+            {
+                //Set error message
+                ErrorMessage = errorMessage
+            };
+
+            //If no credentials provided, respond with error message
+            if (registerCredentials == null)
+                return errorResponse;
+
+            //Make sure we have a username, before proceeding
+            if (string.IsNullOrEmpty(registerCredentials?.Username))
+                return errorResponse;
+
+
+            var user = new ApplicationUser()
+            {
+               UserName = registerCredentials?.Username,
+               Firstname = registerCredentials?.Firstname,
+               Lastname = registerCredentials?.Lastname,
+               Email = registerCredentials?.Email
+            };
+
+            //Try to create user
+            var result =  await mUserManager.CreateAsync(user, registerCredentials?.Password);
+
+            if (result.Succeeded)
+            {
+                //Find newly created user, to send to the client DataStore
+                var UserIdentity = await mUserManager.FindByNameAsync(registerCredentials.Username);
+
+                //Generate Email verification code
+                var emailVerifictionCode = await mUserManager.GenerateEmailConfirmationTokenAsync(user);
+
+                //TODO: Email the user verification code
+
+                //Return valid response
+                return new ApiResponse<RegisterResultApiModel>()
+                {
+                    Response = new RegisterResultApiModel()
+                    {
+                        FirstName = UserIdentity.Firstname,
+                        LastName = UserIdentity.Lastname,
+                        Email = UserIdentity.Email,
+                        UserName = UserIdentity.UserName,
+
+                        Token = user.GenerateJwtToken()
+                    }
+                };
+            }
+            else
+            {
+                return new ApiResponse<RegisterResultApiModel>()
+                {
+                    //Aggregate all errors into a single error string
+                    ErrorMessage = result.Errors.ToList()
+                             .Select(f => f.Description)
+                             .Aggregate((a, b) => $"{a}{Environment.NewLine}{b}")
+                };
+            }
+        }
+
+        /// <summary>
+        /// Logs the user in and Issues unique token for user to use for subsequent requests
+        /// </summary>
+        /// <returns>ApiResponse of LoginResultApiModel</returns>
         [Route("api/login")]
         public async Task<ApiResponse<LoginResultApiModel>> LogInAsync([FromBody]LoginCredentialsApiModel loginCredentials)
         {
@@ -73,19 +148,19 @@ namespace Fasseto.Word.Web.Server
             };
 
             //Make sure we have a username
-            if (loginCredentials?.UsernameOrEmail == null || string.IsNullOrEmpty(loginCredentials?.UsernameOrEmail))
+            if (string.IsNullOrEmpty(loginCredentials?.UsernameOrEmail))
                 return errorResponse;
 
             //Validate if the user credentials are correct
             var isEmail = loginCredentials.UsernameOrEmail.Contains("@");
 
             //Get User Details
-            var user = isEmail ? await mUserManager.FindByEmailAsync(loginCredentials.UsernameOrEmail) 
-                                 : 
+            var user = isEmail ? await mUserManager.FindByEmailAsync(loginCredentials.UsernameOrEmail)
+                                 :
                                  await mUserManager.FindByNameAsync(loginCredentials.UsernameOrEmail);
 
             //Fail to find a user, return error
-            if(user == null)
+            if (user == null)
                 return errorResponse;
 
             //If we got here we have a user
@@ -98,41 +173,22 @@ namespace Fasseto.Word.Web.Server
             //Get Username
             var username = user.UserName;
 
-            //Set our tokens claims
-            var claims = new[]
-            {
-                //Unique ID for this token
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N")),
-
-                //The username using the Identity name so it fills out HttpContext.User.Identity.Name value
-                new Claim(ClaimsIdentity.DefaultNameClaimType, username),
-            };
-
-            //Create the credentials used to generate tokens for user
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(IoC.Configuration["Jwt:SecretKey"]));
-            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            //Generate the Jwt Token
-            var token = new JwtSecurityToken(
-                                        issuer: IoC.Configuration["Jwt:Issuer"],
-                                        audience: IoC.Configuration["Jwt:Audience"],
-                                        claims: claims,
-                                        expires: DateTime.Now.AddMonths(3),
-                                        signingCredentials: credentials
-                                            );
-
             //Return token to the authenticated user
             return new ApiResponse<LoginResultApiModel>()
             {
                 Response = new LoginResultApiModel()
                 {
                     FirstName = user.Firstname,
-                    Lastname = user.Lastname,
+                    LastName = user.Lastname,
                     Email = user.Email,
-                    Username = user.UserName,
-                    Token = new JwtSecurityTokenHandler().WriteToken(token)
+                    UserName = user.UserName,
+                    Token = user.GenerateJwtToken()
                 }
             };
-       }
+        }
+
+        #endregion
+
+
     }
 }

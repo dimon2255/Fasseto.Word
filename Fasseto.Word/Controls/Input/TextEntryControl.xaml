@@ -57,7 +57,7 @@
             <TextBlock Grid.Column="0" 
                        Text="{Binding Label}" 
                        Name="Label"
-                       Margin="15 12"
+                       Margin="10"
                        VerticalAlignment="Center"
                        HorizontalAlignment="Left"
                        FontFamily="{StaticResource LatoRegular}"
@@ -70,7 +70,7 @@
                        local:FocusAndSelectProperty.Value="{Binding Editing}"
                        Text="{Binding EditedText, UpdateSourceTrigger=PropertyChanged}" 
                        Padding="2"
-                       Margin="11 15 10 12"
+                       Margin="10"
                        FontSize="{StaticResource FontSizeRegular}"
                        VerticalAlignment="Center"
                        />

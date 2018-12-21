@@ -1,4 +1,5 @@
-﻿using Ninject;
+﻿using Dna;
+using Ninject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,6 +47,10 @@ namespace Fasseto.Word.Core
         /// </summary>
         public static ITaskManager Task => IoC.Get<ITaskManager>();
 
+        /// <summary>
+        /// Get the <see cref="IClientDataStore"/> for Task ops
+        /// </summary>
+        public static IClientDataStore ClientDataStore => Framework.Service<IClientDataStore>();
 
         #endregion
 

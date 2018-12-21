@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dna;
+using System;
 using System.Security;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,6 +16,11 @@ namespace Fasseto.Word.Core
         #region Public Properties
 
         /// <summary>
+        /// Users username
+        /// </summary>
+        public string UserName { get; set; }
+
+        /// <summary>
         /// Email of the User
         /// </summary>
         public string Email { get; set; }
@@ -24,15 +30,8 @@ namespace Fasseto.Word.Core
         /// </summary>
         public SecureString Password { get; set; }
 
-
         /// <summary>
-        /// Secure Password of the User
-        /// </summary>
-        public SecureString ConfirmPassword { get; set; }
-
-
-        /// <summary>
-        /// Indicates whetther the login command is running its action asynchronously
+        /// Indicates whether the login command is running its action asynchronously
         /// </summary>
         public bool IsRegisterRunning { get; set; }
 
@@ -73,7 +72,27 @@ namespace Fasseto.Word.Core
         {
             await RunCommand(() => this.IsRegisterRunning, async () =>
             {
-                await Task.Delay(5000);
+                //await Task.Delay(5000);
+
+                //Attempts to register a user on the server
+                var result = await WebRequests.PostAsync<ApiResponse<RegisterResultApiModel>>(
+                                                    "http://localhost:5000/api/register",
+                                                     new RegisterCredentialsApiModel()
+                                                     {
+                                                         Username = UserName,
+                                                         Email = Email,
+                                                         Password = (parameter as IHavePassword).SecurePassword.Unsecure()
+                                                     });
+
+                if(await result.DisplayErrorOnFailureAsync("Failed to register"))
+                {
+                    return;
+                }
+
+                var UserData = result.ServerResponse.Response;
+
+                //Does all necessary steps required to be logged in
+                await IoC.Application.HandleSuccessfulLoginAsync(UserData);
             });
         }
 

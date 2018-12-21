@@ -22,14 +22,14 @@ namespace Fasseto.Word.Core
         #region Public Properties
 
         /// <summary>
-        /// Message of the Dailog
+        /// Message of the Dialog
         /// </summary>
         public string Message { get; set; }
 
         /// <summary>
         /// Ok Button Text
         /// </summary>
-        public string OkText { get; set; }
+        public string OkText { get; set; } = "Ok";
 
 
         #endregion

@@ -42,12 +42,16 @@ namespace Dna
 
         #region Public Methods
 
-        public static void Test()
+        /// <summary>
+        /// Generic Service Getter, for any type we want,
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static T Service<T>()
         {
-            new DefaultFrameworkConstruction()
-                .UseFileLogger()
-                .Build();
+            return Provider.GetService<T>();
         }
+ 
 
         /// <summary>
         /// Should be called once a framework construction is finished and we want

@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace Fasseto.Word.Core
 {
@@ -37,7 +38,7 @@ namespace Fasseto.Word.Core
         #region Commands
 
         /// <summary>
-        /// Command fot he back button
+        /// Command for the back button
         /// </summary>
         public ICommand CloseCommand { get; set; }
 
@@ -51,10 +52,15 @@ namespace Fasseto.Word.Core
         /// </summary>
         public ICommand ClearUserDataCommand { get; set; }
 
+        /// <summary>
+        /// Loads the settings data from the client data store
+        /// </summary>
+        public ICommand LoadCommand { get; set; }
+
         #endregion
 
         #region Constructor
-        
+
         /// <summary>
         /// Default Constructor
         /// </summary>
@@ -64,8 +70,8 @@ namespace Fasseto.Word.Core
             CloseCommand = new RelayCommand(Close);
             LogoutCommand = new RelayCommand(Logout);
             ClearUserDataCommand = new RelayCommand(ClearUserData);
-
-            //TODO: remove at a later date when will have real data coming to us
+            LoadCommand = new RelayCommand(async() => await LoadAsync());
+            
 
 
             LogoutButtonText = "Logout";
@@ -74,6 +80,38 @@ namespace Fasseto.Word.Core
         #endregion
 
         #region Command Methods
+
+        /// <summary>
+        /// Loads User Data Store
+        /// </summary>
+        public async Task LoadAsync()
+        {
+            if (await IoC.ClientDataStore.HasCredentialsAsync())
+            {
+                var UserData = await IoC.ClientDataStore.GetLoginCredentialsAsync();
+
+                IoC.Settings.Firstname = new TextEntryViewModel()
+                {
+                    Label = "Name",
+                    OriginalText = $"{UserData.Firstname} {UserData.Lastname}",
+                };
+                IoC.Settings.Lastname = new TextEntryViewModel()
+                {
+                    Label = "Username",
+                    OriginalText = $"{UserData.Username}",
+                };
+                IoC.Settings.Password = new PasswordEntryViewModel()
+                {
+                    Label = "Password",
+                    FakePassword = "*********",
+                };
+                IoC.Settings.Email = new TextEntryViewModel()
+                {
+                    Label = "Email",
+                    OriginalText = $"{UserData.Email}",
+                };
+            }
+        }
 
         /// <summary>
         /// Executes when back command is fired
@@ -104,7 +142,7 @@ namespace Fasseto.Word.Core
         /// </summary>
         public void ClearUserData()
         {
-            //Clear all viewmodels 
+            //Clear all view models 
             Firstname = null;
             Lastname = null;
             Password = null;

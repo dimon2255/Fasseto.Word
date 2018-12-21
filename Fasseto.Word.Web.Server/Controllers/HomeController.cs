@@ -10,7 +10,7 @@ namespace Fasseto.Word.Web.Server.Controllers
 {
     public class HomeController : Controller
     {
-        #region Private Properties
+        #region Protected Properties
 
         /// <summary>
         /// Scoped application context
@@ -50,14 +50,14 @@ namespace Fasseto.Word.Web.Server.Controllers
 
         #region Controller Actions
 
+        /// <summary>
+        /// Index Action
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Index()
         {
-
-            #region DBContext Code
-
-            //Make sure the database exists
+             //Create DB if it doesn't exist, if exists ignore the call
             mDbcontext.Database.EnsureCreated();
-
             
             if (!mDbcontext.Settings.Any())
             {
@@ -82,8 +82,7 @@ namespace Fasseto.Word.Web.Server.Controllers
                 firstDatabase = mDbcontext.Settings.FirstOrDefault();
             }
 
-            #endregion
-
+ 
             return View();
         }
 
@@ -157,6 +156,22 @@ namespace Fasseto.Word.Web.Server.Controllers
 
             return Content("Testing", "text/html");
         }
+
+        /// <summary>
+        /// Test method hello
+        /// </summary>
+        /// <returns></returns>
+        [Route("test")]
+        public SettingsDataModel Test([FromBody]SettingsDataModel model)
+        {
+            return new SettingsDataModel()
+            {
+                 Id = "some id",
+                 Name = "Dimitri",
+                 Value = "10"
+            };
+        }
+
 
         #endregion
 

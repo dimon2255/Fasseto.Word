@@ -40,17 +40,19 @@
                                        Foreground="{StaticResource ForegroundDarkBrush}"
                                        Margin="0 0 0 20"/>
 
+                            <!-- UserName  -->
+                            <TextBox Text="{Binding UserName}"  
+                                     Tag="UserName"
+                                     local:IsFocusedProperty.Value="True"
+                                     />
+
                             <!-- Email -->
                             <TextBox Text="{Binding Email}"  
                                      Tag="Email"
-                                     local:IsFocusedProperty.Value="True"
                                      />
                             
                             <!-- Password -->
                             <PasswordBox x:Name="PasswordText" Tag="Password" Margin="0 0 0 30"/>
-
-                            <!-- ConfirmPassword -->
-                            <PasswordBox x:Name="ConfirmPasswordText" Tag="Confirm Password" Margin="0 0 0 30"/>
 
                             <!-- Register Button -->
                             <Button Content="Register"

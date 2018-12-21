@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dna;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -51,6 +52,31 @@ namespace Fasseto.Word.Core
 
             //Show side menu or not
             SideMenuVisible = page == ApplicationPage.Chat;
+        }
+
+        /// <summary>
+        /// Handles what happens when we have successfully logged in
+        /// </summary>
+        /// <param name="loginResult"></param>
+        /// <returns></returns>
+        public async Task HandleSuccessfulLoginAsync(LoginResultApiModel loginResult)
+        {
+      
+            //Store this in client data store
+            await IoC.ClientDataStore.SaveLoginCredentialsAsync(new RegisterCredentialsDataModel()
+            {
+                Email = loginResult.Email,
+                Firstname = loginResult.FirstName,
+                Lastname = loginResult.LastName,
+                Username = loginResult.UserName,
+                Token = loginResult.Token
+            });
+
+            //Load setting from the local Data Store
+            await IoC.Settings.LoadAsync();
+
+            //Go to chat page
+            IoC.Application.GoToPage(ApplicationPage.Chat);
         }
     }
 }

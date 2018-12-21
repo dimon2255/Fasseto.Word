@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -73,6 +74,9 @@ namespace Fasseto.Word.Web.Server
                 options.Password.RequireLowercase = true;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;
+
+                //Make sure unique emails are
+                options.User.RequireUniqueEmail = true;
             });
 
 
@@ -84,10 +88,16 @@ namespace Fasseto.Word.Web.Server
 
                 // Change cookie timeout
                 options.ExpireTimeSpan = TimeSpan.FromSeconds(1500);
-            });                    
-                    
+            });
+
             //Adds MVC Framework Compatible with .NET Core 2.2 version
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(options =>
+            {
+                //Add XML Formatters for input and output streams
+                options.InputFormatters.Add(new XmlSerializerInputFormatter(options));
+                options.OutputFormatters.Add(new XmlSerializerOutputFormatter());
+
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

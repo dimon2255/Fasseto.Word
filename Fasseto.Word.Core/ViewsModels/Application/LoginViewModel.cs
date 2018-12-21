@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dna;
+using System;
 using System.Security;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -62,41 +63,31 @@ namespace Fasseto.Word.Core
         /// <returns></returns>
         public async Task LoginAsync(object parameter)
         {
-
-
             await RunCommand(() => this.IsLoginRunning, async() =>
             {
-                await Task.Delay(1000);
+                //await Task.Delay(1000);
 
-                //Successfully logged in
-                IoC.Settings.Firstname = new TextEntryViewModel()
-                {
-                    Label = "Firstname",
-                    OriginalText = $"Dimitri {DateTime.Now.ToLocalTime()}",
-                };
-                IoC.Settings.Lastname = new TextEntryViewModel()
-                {
-                    Label = "Lastname",
-                    OriginalText = "Pankov",
-                };
-                IoC.Settings.Password = new PasswordEntryViewModel()
-                {
-                    Label = "Password",
-                    FakePassword = "**********",
-                };
-                IoC.Settings.Email = new TextEntryViewModel()
-                {
-                    Label = "Email",
-                    OriginalText = "dimon2255@gmail.com",
-                };
+                var result = await WebRequests.PostAsync<ApiResponse<LoginResultApiModel>>(
+                                                                    "http://localhost:5000/api/login",
+                                                                     new LoginCredentialsApiModel()
+                                                                     {
+                                                                         UsernameOrEmail = Email,
+                                                                         Password = (parameter as IHavePassword).SecurePassword.Unsecure()
+                                                                     }
+                                          
+                );
 
-                //Go to chat page
-                IoC.Application.GoToPage(ApplicationPage.Chat);
+                //Check for errors
+                if (await result.DisplayErrorOnFailureAsync("Failed to login"))
+                {
+                    return;
+                }
 
-                //var email = this.Email;
+                //Get Response
+                var UserData = result.ServerResponse.Response;
 
-                ////IMPORTANT: never store unsecured password in variable like this.
-                //var pass = (parameter as IHavePassword).SecurePassword.Unsecure();
+                //Do all necessary steps required to log in
+                await IoC.Application.HandleSuccessfulLoginAsync(UserData);
             });
         }
 
