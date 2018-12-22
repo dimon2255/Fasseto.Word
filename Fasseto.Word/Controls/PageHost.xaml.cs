@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
+using static Fasseto.Word.DI;
+
 namespace Fasseto.Word
 {
     /// <summary>
@@ -24,7 +26,7 @@ namespace Fasseto.Word
         }
 
         /// <summary>
-        /// Registers CurrentPage as a depdendecy property
+        /// Registers CurrentPage as a dependency property
         /// </summary>
         public static readonly DependencyProperty CurrentPageProperty =
                                                   DependencyProperty.Register(nameof(CurrentPage),
@@ -44,7 +46,7 @@ namespace Fasseto.Word
         }
 
         /// <summary>
-        /// Registers CurrentViewModel as a depdendecy property
+        /// Registers CurrentViewModel as a dependency property
         /// </summary>
         public static readonly DependencyProperty CurrentPageViewModelProperty =
                                                   DependencyProperty.Register(nameof(CurrentPageViewModel),
@@ -127,10 +129,10 @@ namespace Fasseto.Word
         {
             InitializeComponent();
 
-            //if we in desgn mode, show the current page
+            //if we in design mode, show the current page
             // as the dependency property does not fire
             if (DesignerProperties.GetIsInDesignMode(this))
-                NewPage.Content = IoC.Application.CurrentPage.ToBasePage();
+                NewPage.Content = ViewModelApplication.CurrentPage.ToBasePage();
 
         } 
 

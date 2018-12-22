@@ -11,7 +11,7 @@ namespace Fasseto.Word.Relational
     /// </summary>
     public static class FrameworkConstructionExtensions
     {
-        public static FrameworkConstruction UseClientDataStore(this FrameworkConstruction construction)
+        public static FrameworkConstruction AddClientDataStore(this FrameworkConstruction construction)
         {
             construction.Services.AddDbContext<ClientDataStoreDbContext>(options =>
             {
@@ -21,7 +21,7 @@ namespace Fasseto.Word.Relational
             //Add client Data Store for easy access of the backing data store
             //Make it scoped so we can inject scoped DbContext
             construction.Services.AddScoped<IClientDataStore>(
-                                            provider => new ClientDataStore(provider.GetService<ClientDataStoreDbContext>()));
+                                            provider => new BaseClientDataStore(provider.GetService<ClientDataStoreDbContext>()));
 
             return construction;
         }

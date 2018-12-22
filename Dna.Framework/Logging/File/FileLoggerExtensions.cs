@@ -33,7 +33,7 @@ namespace Dna
         /// <param name="construction">The construction</param>
         /// <param name="logPath">The path where to write to</param>
         /// <returns><see cref="FrameworkConstruction"/></returns>
-        public static FrameworkConstruction UseFileLogger(this FrameworkConstruction construction, string logPath = "log.txt")
+        public static FrameworkConstruction AddFileLogger(this FrameworkConstruction construction, string logPath = "log.txt")
         {
             construction.Services.AddLogging(options =>
             {

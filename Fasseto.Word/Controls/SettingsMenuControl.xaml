@@ -4,10 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Fasseto.Word"
-             xmlns:core="clr-namespace:Fasseto.Word.Core;assembly=Fasseto.Word.Core"
              mc:Ignorable="d"
-             d:DataContext="{x:Static core:SettingsMenuDesignViewModel.Instance}"
-             DataContext="{x:Static core:IoC.Settings}"
+             d:DataContext="{x:Static local:SettingsMenuDesignViewModel.Instance}"
+             DataContext="{x:Static local:DI.ViewModelSettings}"
                        >
 
     <Border Background="{StaticResource ForegroundLightBrush}"

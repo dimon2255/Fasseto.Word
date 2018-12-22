@@ -38,6 +38,11 @@ namespace Dna
         /// </summary>
         public static IExceptionHandler ExceptionHandler => Provider.GetService<IExceptionHandler>();
 
+        /// <summary>
+        /// Get the instance of <see cref="FrameworkConstruction"/> class
+        /// </summary>
+        public static FrameworkConstruction Construction { get; private set; }
+
         #endregion
 
         #region Public Methods
@@ -51,7 +56,20 @@ namespace Dna
         {
             return Provider.GetService<T>();
         }
- 
+
+        /// <summary>
+        /// Returns the instance of T
+        /// </summary>
+        /// <typeparam name="T">Type to instantiate</typeparam>
+        /// <param name="construction"></param>
+        /// <returns></returns>
+        public static FrameworkConstruction Construct<T>()
+            where T : FrameworkConstruction, new()
+        {
+            Construction = new T();
+
+            return Construction;
+        }
 
         /// <summary>
         /// Should be called once a framework construction is finished and we want

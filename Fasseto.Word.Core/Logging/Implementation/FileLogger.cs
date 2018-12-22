@@ -40,7 +40,7 @@ namespace Fasseto.Word.Core
         {
             var currentTime = DateTimeOffset.Now.ToString("yyyy-MM-dd hh:mm:ss");
 
-            IoC.File.WriteTextToFileAsync($"[{currentTime}]" + message, FilePath, append: true);
+            CoreDI.FileManager.WriteTextToFileAsync($"[{currentTime}]" + message, FilePath, append: true);
         }
 
         #endregion

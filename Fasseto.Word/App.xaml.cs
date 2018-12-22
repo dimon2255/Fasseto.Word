@@ -1,9 +1,12 @@
 ﻿using Dna;
 using Fasseto.Word.Core;
 using Fasseto.Word.Relational;
-using System;
 using System.Threading.Tasks;
 using System.Windows;
+
+//Static using for easy access of DI Services
+using static Fasseto.Word.DI;
+using static Dna.Framework;
 
 namespace Fasseto.Word
 {
@@ -24,10 +27,10 @@ namespace Fasseto.Word
             await ApplicationSetupAsync();
 
             //Log it
-            IoC.Logger.Log("Application starting...", LogLevel.Debug);
+            Logger.LogDebugSource("Application starting...");
 
-            IoC.Application.GoToPage(
-                await IoC.ClientDataStore.HasCredentialsAsync() ?
+            ViewModelApplication.GoToPage(
+                await ClientDataStore.HasCredentialsAsync() ?
                     ApplicationPage.Chat :
                     ApplicationPage.Login);
 
@@ -42,37 +45,18 @@ namespace Fasseto.Word
         private async Task ApplicationSetupAsync()
         {
             //Setup Dna Framework
-            new DefaultFrameworkConstruction()
-                .UseClientDataStore()
-                .UseFileLogger()
-                .Build();
-
-
-            // Setup IoC
-            IoC.Setup();
-
-            //Bind a logger
-            IoC.Kernel.Bind<ILogFactory>().ToConstant(new BaseLogFactory(new[]
-            {
-                //TODO: Add AppicationSettings so we can set/edit a log location
-                //      for now just log to the path where this application is running
-                 new Core.FileLogger("OldLog.txt")
-            }));
-
-            //Bind a TaskManager
-            IoC.Kernel.Bind<ITaskManager>().ToConstant(new TaskManager());
-
-            //Bind a FileManager
-            IoC.Kernel.Bind<IFileManager>().ToConstant(new FileManager());
-
-            //Bind a UIManager
-            IoC.Kernel.Bind<IUIManager>().ToConstant(new UIManager());
+            Construct<DefaultFrameworkConstruction>()
+                    .AddFileLogger()
+                    .AddClientDataStore()
+                    .AddFassetoWordViewModels()
+                    .AddFassetoClientServices()
+                    .Build();
 
             //Register a service
-            await IoC.ClientDataStore.EnsureDataStoreAsync();
+            await ClientDataStore.EnsureDataStoreAsync();
 
             //Load new Settings
-            await IoC.Settings.LoadAsync();
+            await ViewModelSettings.LoadAsync();
         }
     }
 }

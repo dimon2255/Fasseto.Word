@@ -21,7 +21,7 @@ namespace Fasseto.Word
         }
 
         /// <summary>
-        /// ViewModel for any derived class usercontrol
+        /// ViewModel for any derived class user control
         /// </summary>
         public VM ViewModel
         {

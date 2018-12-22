@@ -1,15 +1,14 @@
-﻿<local:UserControlBase  x:TypeArguments="core:VerticalMenuViewModel" x:Class="Fasseto.Word.VerticalMenu"
+﻿<local:UserControlBase  x:TypeArguments="local:VerticalMenuViewModel" x:Class="Fasseto.Word.VerticalMenu"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Fasseto.Word"
-             xmlns:core="clr-namespace:Fasseto.Word.Core;assembly=Fasseto.Word.Core"
              mc:Ignorable="d" 
              >
 
     <!-- Item template for menu-->
-    <ItemsControl DataContext="{x:Static core:VerticalMenuDesignViewModel.Instance}"
+    <ItemsControl DataContext="{x:Static local:VerticalMenuDesignViewModel.Instance}"
                   ItemsSource="{Binding MenuItems}"
                   Background="White"
                   >

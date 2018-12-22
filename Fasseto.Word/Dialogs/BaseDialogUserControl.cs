@@ -84,7 +84,7 @@ namespace Fasseto.Word
         {
             var tcs = new TaskCompletionSource<bool>();
 
-            IoC.Task.Run(() =>
+            CoreDI.TaskManager.Run(() =>
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
@@ -101,7 +101,7 @@ namespace Fasseto.Word
 
                         mDialogWindow.Content = this;
 
-                        //Set thr DataContext to its ViewModel
+                        //Set the DataContext to its ViewModel
                         DataContext = viewModel;
 
                         //Show dialog at the center of the parent

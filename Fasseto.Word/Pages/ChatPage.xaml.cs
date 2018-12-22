@@ -15,7 +15,7 @@ namespace Fasseto.Word
         #region Constructors
 
         /// <summary>
-        /// Default Constructor Constructor
+        /// Default Constructor
         /// </summary>
         public ChatPage()
         {
@@ -24,7 +24,7 @@ namespace Fasseto.Word
         }
 
         /// <summary>
-        /// Overrloaded Constructor
+        /// Overloaded Constructor
         /// </summary>
         /// <param name="specificViewModel">ViewModel to use on the Page</param>
         public ChatPage(ChatMessageListViewModel specificViewModel) : base(specificViewModel)

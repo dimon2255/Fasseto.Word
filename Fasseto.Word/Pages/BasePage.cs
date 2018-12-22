@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows;
-using System.Windows.Media.Animation;
+﻿using Dna;
 using Fasseto.Word.Core;
 using System.ComponentModel;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Fasseto.Word
 {
@@ -30,7 +26,7 @@ namespace Fasseto.Word
         public PageAnimation PageLoadAnimation { get; set; } = PageAnimation.SlideAndFadeInFromRight;
 
         /// <summary>
-        /// The animation to play when page is unlaoded
+        /// The animation to play when page is unloaded
         /// </summary>
         public PageAnimation PageUnLoadAnimation { get; set; } = PageAnimation.SlideAndFadeOutToLeft;
 
@@ -40,7 +36,7 @@ namespace Fasseto.Word
         public double SlideSeconds { get; set; } = 0.5;
 
         /// <summary>
-        /// A flag to indicate whether the oage should be animated out or not.
+        /// A flag to indicate whether the page should be animated out or not.
         /// Useful for when we are using 
         /// </summary>
         public bool ShouldAnimateOut { get; set; }
@@ -187,7 +183,17 @@ namespace Fasseto.Word
             if (specificViewModel != null)
                 ViewModel = specificViewModel;
             else
-                ViewModel = IoC.Get<VM>();
+            {
+                if (DesignerProperties.GetIsInDesignMode(this))
+                {
+                    ViewModel = new VM();
+
+                }
+                else
+                {
+                    ViewModel = Framework.Service<VM>() ?? new VM();                
+                }
+            }
         }
 
 
@@ -197,11 +203,15 @@ namespace Fasseto.Word
         /// </summary>
         public BasePage() : base()
         {
-            ViewModel = IoC.Get<VM>();
-
-            //If ViewModel is still null
-            if (ViewModel == null)
+            if (DesignerProperties.GetIsInDesignMode(this))
+            {
                 ViewModel = new VM();
+
+            }
+            else
+            {
+                ViewModel = Framework.Service<VM>() ?? new VM();
+            }
         }
 
         #endregion
