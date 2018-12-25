@@ -31,8 +31,6 @@ namespace Fasseto.Word.Core
             //Lock the task
             await AsyncAwaiter.AwaitAsync(nameof(BaseFileManager) + path, async () =>
              {
-                 //TODO: Add IoC.Task.Run that logs to logger on failure
-
                  //Run the synchronous file access as a new task
                  await CoreDI.TaskManager.Run(() =>
                  {

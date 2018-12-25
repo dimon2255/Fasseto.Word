@@ -38,7 +38,7 @@ namespace Fasseto.Word
         /// <param name="updatingFlag">The boolean flag indicating whether the command is already running</param>
         /// <param name="action">Action --> command to execute depending on the flag true or false --> ex</param>
         /// <returns></returns>
-        protected async Task RunCommand(Expression<Func<bool>> updatingFlag, Func<Task> action)
+        protected async Task RunCommandAsync(Expression<Func<bool>> updatingFlag, Func<Task> action)
         {
             if (updatingFlag.GetPropertyValue())
                 return;

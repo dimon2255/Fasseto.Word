@@ -73,12 +73,12 @@ namespace Fasseto.Word
         /// <returns></returns>
         public async Task RegisterAsync(object parameter)
         {
-            await RunCommand(() => this.IsRegisterRunning, async () =>
+            await RunCommandAsync(() => this.IsRegisterRunning, async () =>
             {
                 //await Task.Delay(5000);
 
                 //Attempts to register a user on the server
-                var result = await WebRequests.PostAsync<ApiResponse<RegisterResultApiModel>>(
+                var result = await WebRequests.PostAsync<ApiResponse<UserProfileDetailsApiModel>>(
                                                     "http://localhost:5000/api/register",
                                                      new RegisterCredentialsApiModel()
                                                      {

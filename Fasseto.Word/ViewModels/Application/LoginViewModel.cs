@@ -66,11 +66,11 @@ namespace Fasseto.Word
         /// <returns></returns>
         public async Task LoginAsync(object parameter)
         {
-            await RunCommand(() => this.IsLoginRunning, async() =>
+            await RunCommandAsync(() => this.IsLoginRunning, async() =>
             {
                 //await Task.Delay(1000);
 
-                var result = await WebRequests.PostAsync<ApiResponse<LoginResultApiModel>>(
+                var result = await WebRequests.PostAsync<ApiResponse<UserProfileDetailsApiModel>>(
                                                                     "http://localhost:5000/api/login",
                                                                      new LoginCredentialsApiModel()
                                                                      {
@@ -79,6 +79,7 @@ namespace Fasseto.Word
                                                                      }
                                           
                 );
+
 
                 //Check for errors
                 if (await result.DisplayErrorOnFailureAsync("Failed to login"))

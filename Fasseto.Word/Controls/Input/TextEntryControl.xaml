@@ -9,7 +9,9 @@
              >
     
     <Border BorderBrush="{StaticResource ForegroundDarkBrush}"
-            BorderThickness="0 0 0 0.4">
+            BorderThickness="0 0 0 0.4"
+            IsEnabled="{Binding Working, Converter={local:BooleanInvertConverterConverter}}"
+            >
 
         <Grid Background="{StaticResource ForegroundLightBrush}">
 
@@ -88,8 +90,11 @@
             <Grid Grid.Column="2"
                     local:AnimateFadeInOutProperty.Value="{Binding Editing, 
                     Converter={local:BooleanInvertConverterConverter}}"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
                   >
 
+                
                 <Button Content="{StaticResource FontAwesomeEllipsisHorizontalIcon}"
                         FontFamily="{StaticResource FontAwesome}"
                         Padding="8 5"
@@ -104,6 +109,21 @@
                         />
 
             </Grid>
+
+            <!-- Working Button Container-->
+            <Grid Grid.Column="2"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Center"
+                  local:AnimateFadeInOutProperty.Value="{Binding Working}"
+                  >
+
+                <Border Padding="0 0 8 0">
+                    <TextBlock Style="{StaticResource SpinningText}" />
+                </Border>
+
+            </Grid>
+
+
 
 
             <StackPanel Grid.Column="2" Orientation="Horizontal">

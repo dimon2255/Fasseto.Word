@@ -75,6 +75,20 @@ namespace Fasseto.Word.Relational
             await mDbContext.SaveChangesAsync();
         }
 
+
+        /// <summary>
+        /// Clears all Credentials in the local data store
+        /// </summary>
+        /// <returns></returns>
+        public async Task ClearAllLoginCredentialsAsync()
+        {
+            //Remove all entries from login credentials
+            mDbContext.LoginCredentails.RemoveRange(mDbContext.LoginCredentails);
+
+            //save changes
+            await mDbContext.SaveChangesAsync();
+        }
+
         #endregion
     }
 }

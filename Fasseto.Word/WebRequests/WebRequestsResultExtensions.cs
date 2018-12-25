@@ -18,7 +18,7 @@ namespace Fasseto.Word
         /// <param name="response">The response to check</param>
         /// <param name="title">Title of the dialog, if any errors are found</param>
         /// <returns>True if there are errors, and false if none</returns>
-        public static async Task<bool> DisplayErrorOnFailureAsync<T>(this WebRequestResult<ApiResponse<T>> response, string title)
+        public static async Task<bool> DisplayErrorOnFailureAsync(this WebRequestResult<ApiResponse<UserProfileDetailsApiModel>> response, string title)
         {
 
             //If there was no response, bad data, or a response with a failed error message

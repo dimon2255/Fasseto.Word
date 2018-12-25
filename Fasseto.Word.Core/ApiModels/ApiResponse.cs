@@ -8,7 +8,7 @@ namespace Fasseto.Word.Core
     /// The response for all web API calls made
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class ApiResponse<T>
+    public class ApiResponse
     {
         /// <summary>
         /// True if no error has occurred, false if error had occurred
@@ -23,6 +23,22 @@ namespace Fasseto.Word.Core
         /// <summary>
         /// The API Response object
         /// </summary>
-        public T Response { get; set; }
+        public object Response { get; set; }
+    }
+
+    /// <summary>
+    /// Response for all WEB API calls made
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class ApiResponse<T> : ApiResponse
+    {
+        /// <summary>
+        /// Response from server
+        /// </summary>
+        public new T Response
+        {
+            get => (T)base.Response;
+            set => base.Response = value;
+        }
     }
 }

@@ -10,7 +10,7 @@ namespace Fasseto.Word.Core
 {
     public class BaseTaskManager : ITaskManager
     {
-        
+
         #region Task Methods
 
         /// <summary>
@@ -35,6 +35,19 @@ namespace Fasseto.Word.Core
                 //Throw it as normal
                 throw;
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="function"></param>
+        /// <param name="origin">The method/function this message was logged from</param>
+        /// <param name="filepath">The code filename that this message was logged from</param>
+        /// <param name="lineNumber">The line number of code in the file this message was logged from</param>
+        /// <returns></returns>
+        public async void RunAndForget(Func<Task> function, [CallerMemberName]string origin = "", [CallerFilePath]string filepath = "", [CallerLineNumber]int lineNumber = 0)
+        {
+            await Run(function, origin, filepath, lineNumber);
         }
 
         /// <summary>
@@ -86,6 +99,21 @@ namespace Fasseto.Word.Core
                 //Throw it as normal
                 throw;
             }
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="function"></param>
+        /// <param name="origin">The method/function this message was logged from</param>
+        /// <param name="filepath">The code filename that this message was logged from</param>
+        /// <param name="lineNumber">The line number of code in the file this message was logged from</param>
+        /// <returns></returns>
+        public async void RunAndForget<TResult>(Func<Task<TResult>> function, [CallerMemberName]string origin = "", [CallerFilePath]string filepath = "", [CallerLineNumber]int lineNumber = 0)
+        {
+              await Run(function, origin, filepath, lineNumber);
         }
 
         /// <summary>

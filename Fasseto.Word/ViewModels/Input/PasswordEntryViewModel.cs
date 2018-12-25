@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Security;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Fasseto.Word.Core;
 
@@ -40,7 +41,7 @@ namespace Fasseto.Word
         public string ConfirmPasswordHintText { get; set; }
 
         /// <summary>
-        /// Orignal Password Before Editing
+        /// Original Password Before Editing
         /// </summary>
         public SecureString CurrentPassword{ get; set; }
 
@@ -50,12 +51,12 @@ namespace Fasseto.Word
         public SecureString NewPassword { get; set; }
 
         /// <summary>
-        /// The confirm passsword 
+        /// The confirm password 
         /// </summary>
         public SecureString ConfirmPassword { get; set; }
 
         /// <summary>
-        /// Indicates whether curent control is in editing mode
+        /// Indicates whether current control is in editing mode
         /// </summary>
         public bool Editing { get; set; }
 
@@ -76,6 +77,17 @@ namespace Fasseto.Word
         /// Command for Canceling out edit mode
         /// </summary>
         public ICommand CancelCommand { get; set; }
+
+        /// <summary>
+        /// Indicates if the current control is pending an update
+        /// </summary>
+        public bool Working { get; set; }
+
+        /// <summary>
+        /// Action to Run when save button is clicked
+        /// Returns true if save was successful, or false otherwise
+        /// </summary>
+        public Func<Task<bool>> CommitAction { get; set; }
 
         #region Constructor
 
@@ -120,64 +132,26 @@ namespace Fasseto.Word
         /// <summary>
         /// Save Text -> Commit
         /// </summary>
-        private void Save()
+        private async void Save()
         {
- 
-            //Make sure current password is correct
-            //TODO: this will come from the real backend
-            var storedPassword = "Testing";
+            //Store result of a commit call
+            var result = default(bool);
 
-            if (storedPassword != CurrentPassword.Unsecure())
+            await RunCommandAsync(() => Working, async () =>
             {
-                //Let this know passwords do not match
-                UI.ShowMessage(new MessageBoxDialogViewModel()
+                //while working come out of editing mode
+                Editing = false;
+
+                //try and do the work
+                result = CommitAction == null ? true : await CommitAction();
+
+            }).ContinueWith(t =>
+            {
+                if (!result)
                 {
-                    Message = "Current Password is invalid! Please, try again!",
-                    OkText = "Ok",
-                    Title = "Wrong Password entry"
-                });
-                return;
-            }
-
-            //Make sure passwords match when changing passwords
-            if (NewPassword.Unsecure() != ConfirmPassword.Unsecure())
-            {
-                //Let this know passwords do not match
-                UI.ShowMessage(new MessageBoxDialogViewModel()
-                {
-                    Message = "Paswords do not match! Please, try again!",
-                    OkText = "Ok",
-                    Title = "Password mismatch"
-                });
-                return;
-            }
-
-            //Make sure passwords match when changing passwords
-            if (NewPassword.Unsecure().Length == 0)
-            {
-                //Let this know passwords do not match
-                UI.ShowMessage(new MessageBoxDialogViewModel()
-                {
-                    Message = "You ust enter password",
-                    Title = "Password to short!",
-                    OkText = "Ok"
-
-                });
-                return;
-            }
-
-            //Set the edited password to the current value
-            CurrentPassword = new SecureString();
-            foreach (var c in NewPassword.Unsecure().ToCharArray())
-            {
-                CurrentPassword.AppendChar(c);
-            }
-
-            var actualCurrentPassword = CurrentPassword.Unsecure();
-            var actualNewPassword = NewPassword.Unsecure();
-            var actualConfirmPassword = ConfirmPassword.Unsecure();
-
-            Editing = false;
+                    Editing = true;
+                }
+            });
         }
 
         #endregion

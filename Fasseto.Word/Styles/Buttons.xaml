@@ -91,7 +91,7 @@
         <Setter Property="Margin" Value="0 10"/>
         <Setter Property="IsHitTestVisible" Value="True"/>
         
-        <!-- Set Attached IsPropertyProperty to intial value of false -->
+        <!-- Set Attached IsPropertyProperty to initial value of false -->
         <Setter Property="local:IsBusyProperty.Value" Value="False"/>
 
 
@@ -321,7 +321,7 @@
                                          VerticalAlignment="{TemplateBinding VerticalAlignment}"
                                          HorizontalAlignment="{TemplateBinding HorizontalAlignment}">
 
-                        <!-- Add a render and scale tranform -->
+                        <!-- Add a render and scale transform -->
                         <Border.RenderTransform>
                             <ScaleTransform/>
                         </Border.RenderTransform>

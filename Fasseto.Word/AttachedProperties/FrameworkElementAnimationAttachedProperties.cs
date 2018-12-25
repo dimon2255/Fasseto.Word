@@ -24,7 +24,7 @@ namespace Fasseto.Word
 
 
         /// <summary>
-        /// Executes when value is upadated even if it is the same value
+        /// Executes when value is updated even if it is the same value
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="value"></param>

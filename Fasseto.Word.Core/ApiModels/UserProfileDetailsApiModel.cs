@@ -3,7 +3,7 @@
     /// <summary>
     /// The result of a successful login request via API call
     /// </summary>
-    public class LoginResultApiModel
+    public class UserProfileDetailsApiModel
     {
         #region Public Properties
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Fasseto.Word
@@ -30,6 +31,17 @@ namespace Fasseto.Word
         /// </summary>
         public bool Editing { get; set; }
 
+        /// <summary>
+        /// Indicates if the current control is pending an update
+        /// </summary>
+        public bool Working { get; set; }
+
+        /// <summary>
+        /// Action to Run when save button is clicked
+        /// Returns true if save was successful, or false otherwise
+        /// </summary>
+        public Func<Task<bool>> CommitAction{ get; set; }
+
         #endregion
 
         /// <summary>
@@ -59,9 +71,6 @@ namespace Fasseto.Word
             SaveCommand = new RelayCommand(Save);
             EditCommand = new RelayCommand(Edit);
             CancelCommand = new RelayCommand(Cancel);
-
-
-
         }
 
         #endregion
@@ -81,7 +90,7 @@ namespace Fasseto.Word
         }
 
         /// <summary>
-        /// Cances out edit mode
+        /// Cancels out edit mode
         /// </summary>
         private void Cancel()
         {
@@ -91,12 +100,34 @@ namespace Fasseto.Word
         /// <summary>
         /// Save Text -> Commit
         /// </summary>
-        private void Save()
+        private async void Save()
         {
-            //TODO:
-            OriginalText = EditedText;
+            //Store result of a commit call
+            var result = default(bool);
 
-            Editing = false;
+            //save original text
+            var currentSavedValue = OriginalText;
+
+            await RunCommandAsync(() => Working, async () =>
+            {
+                //while working come out of editing mode
+                Editing = false;
+
+                //commit the changed text, so we can see it working
+                OriginalText = EditedText;
+
+                //try and do the work
+                result = CommitAction == null ? true : await CommitAction();      
+                
+            }).ContinueWith(t =>
+            {
+                if (!result)
+                {
+                    OriginalText = currentSavedValue;
+
+                    Editing = true;
+                }
+            });
         }
 
         #endregion

@@ -10,6 +10,18 @@ namespace Fasseto.Word.Core
     /// </summary>
     public interface ITaskManager
     {
+
+        /// <summary>
+        /// Queues the specified work to run on the thread pool and returns a proxy for the Task
+        /// </summary>
+        /// <param name="function">Function to run</param>
+        /// <param name="origin">The method/function this message was logged from</param>
+        /// <param name="filepath">The code filename that this message was logged from</param>
+        /// <param name="lineNumber">The line number of code in the file this message was logged from</param>
+        /// <remarks>The passed in Task cannot be awaited as it is to be run and forgotten.</remarks>
+        /// <returns></returns>
+        void RunAndForget(Func<Task> function, [CallerMemberName]string origin = "", [CallerFilePath]string filepath = "", [CallerLineNumber]int lineNumber = 0);
+
         /// <summary>
         /// Queues the specified work to run on the thread pool and returns a proxy for the Task
         /// </summary>
@@ -29,6 +41,17 @@ namespace Fasseto.Word.Core
         /// <param name="lineNumber">The line number of code in the file this message was logged from</param>
         Task<TResult> Run<TResult>(Func<Task<TResult>> function, CancellationToken cancellationToken, [CallerMemberName]string origin = "", [CallerFilePath]string filepath = "", [CallerLineNumber]int lineNumber = 0);
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="function"></param>
+        /// <param name="origin">The method/function this message was logged from</param>
+        /// <param name="filepath">The code filename that this message was logged from</param>
+        /// <param name="lineNumber">The line number of code in the file this message was logged from</param>
+        /// <returns></returns>
+        void RunAndForget<TResult>(Func<Task<TResult>> function, [CallerMemberName]string origin = "", [CallerFilePath]string filepath = "", [CallerLineNumber]int lineNumber = 0);
 
         /// <summary>
         /// Queues the specified work to run on the thread pool and returns a proxy for the Task

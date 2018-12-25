@@ -56,7 +56,7 @@ namespace Fasseto.Word
             await ClientDataStore.EnsureDataStoreAsync();
 
             //Load new Settings
-            await ViewModelSettings.LoadAsync();
+            CoreDI.TaskManager.RunAndForget(ViewModelSettings.LoadAsync);
         }
     }
 }

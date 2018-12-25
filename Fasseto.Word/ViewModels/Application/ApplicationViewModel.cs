@@ -12,6 +12,16 @@ namespace Fasseto.Word
 {
     public class ApplicationViewModel : BaseViewModel
     {
+        #region Private Properties
+
+        /// <summary>
+        /// Indicates whether the settings menu should be visible or not.
+        /// </summary>
+        private bool mSettingMenuVisible;
+
+        #endregion
+
+        #region Public Properties
 
         /// <summary>
         /// Indicates whether the side menu should be visible or not.
@@ -21,7 +31,20 @@ namespace Fasseto.Word
         /// <summary>
         /// Indicates whether the settings menu should be visible or not.
         /// </summary>
-        public bool SettingsMenuVisible { get; set; }
+        public bool SettingsMenuVisible
+        {
+            get => mSettingMenuVisible;
+            set
+            {
+                if (mSettingMenuVisible == value)
+                    return;
+
+                    mSettingMenuVisible = value;
+
+                if (mSettingMenuVisible)
+                    CoreDI.TaskManager.RunAndForget(ViewModelSettings.LoadAsync);
+            }
+        }
 
         /// <summary>
         /// Current Page of the Application.
@@ -32,6 +55,8 @@ namespace Fasseto.Word
         /// The current page View Model to use when GoToPage is called
         /// </summary>
         public BaseViewModel CurrentPageViewModel { get; set; }
+
+        #endregion
 
         /// <summary>
         /// Navigate to specified page
@@ -62,7 +87,7 @@ namespace Fasseto.Word
         /// </summary>
         /// <param name="loginResult"></param>
         /// <returns></returns>
-        public async Task HandleSuccessfulLoginAsync(LoginResultApiModel loginResult)
+        public async Task HandleSuccessfulLoginAsync(UserProfileDetailsApiModel loginResult)
         {
       
             //Store this in client data store

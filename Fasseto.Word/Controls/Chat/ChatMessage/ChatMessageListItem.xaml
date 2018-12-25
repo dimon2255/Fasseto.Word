@@ -87,7 +87,7 @@
                                                         FallbackValue=Collapsed}"
                                />
                     </Border>
-                    <!-- Image Attachmment -->
+                    <!-- Image Attachment -->
                     <Border CornerRadius="10"
                             Margin="0 0 0 15"
                             MaxWidth="300"

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -24,6 +23,12 @@ namespace Fasseto.Word.Web.Server
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Add SendGrid email sender
+            services.AddSendGridEmailSender();
+
+            //Add Template Email Sender
+            services.AddEmailTemplateSender();
+         
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -79,7 +84,6 @@ namespace Fasseto.Word.Web.Server
                 options.User.RequireUniqueEmail = true;
             });
 
-
             //Alter application cookie info
             services.ConfigureApplicationCookie(options =>
             {
@@ -104,7 +108,7 @@ namespace Fasseto.Word.Web.Server
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
         {
             //Pass the IServiceProvider reference for use in the whole application
-            IoC.Provider = serviceProvider;
+            IoC.Init(app.ApplicationServices);
 
             //Setup Identity 
             app.UseAuthentication();
@@ -121,7 +125,7 @@ namespace Fasseto.Word.Web.Server
             }
 
             app.UseHttpsRedirection();
-          //  app.UseStaticFiles();
+            app.UseStaticFiles();
             app.UseCookiePolicy();
 
             app.UseMvc(routes =>

@@ -16,11 +16,11 @@ namespace Fasseto.Word.Relational
             construction.Services.AddDbContext<ClientDataStoreDbContext>(options =>
             {
                 options.UseSqlite(construction.Configuration.GetConnectionString("ClientDataStoreConnection"));
-            });
+            }, ServiceLifetime.Transient);
 
             //Add client Data Store for easy access of the backing data store
             //Make it scoped so we can inject scoped DbContext
-            construction.Services.AddScoped<IClientDataStore>(
+            construction.Services.AddTransient<IClientDataStore>(
                                             provider => new BaseClientDataStore(provider.GetService<ClientDataStoreDbContext>()));
 
             return construction;

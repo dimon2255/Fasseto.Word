@@ -85,6 +85,7 @@
                     
                     <local:TextEntryControl DataContext="{Binding Firstname}"/>
                     <local:TextEntryControl DataContext="{Binding Lastname}"/>
+                    <local:TextEntryControl DataContext="{Binding Username}"/>
                     <local:PasswordEntryControl DataContext="{Binding Password}"/>
                     <local:TextEntryControl DataContext="{Binding Email}"/>
 

@@ -31,5 +31,11 @@ namespace Fasseto.Word.Core
         /// <param name="loginCredentials">Login Credentials to save</param>
         /// <returns>Returns a Task that will finish when Save completes</returns>
         Task SaveLoginCredentialsAsync(LoginCredentialsDataModel loginCredentials);
+
+        /// <summary>
+        /// Removes all Credentials stored in the local data store
+        /// </summary>
+        /// <returns></returns>
+        Task ClearAllLoginCredentialsAsync();
     }
 }
