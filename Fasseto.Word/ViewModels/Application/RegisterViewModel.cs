@@ -79,7 +79,7 @@ namespace Fasseto.Word
 
                 //Attempts to register a user on the server
                 var result = await WebRequests.PostAsync<ApiResponse<UserProfileDetailsApiModel>>(
-                                                    "http://localhost:5000/api/register",
+                                                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.Register),
                                                      new RegisterCredentialsApiModel()
                                                      {
                                                          Username = UserName,

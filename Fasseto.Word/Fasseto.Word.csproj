@@ -137,6 +137,7 @@
     <Compile Include="Pages\LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ValueConverters\SideMenuContentConverter.cs" />
     <Compile Include="ValueConverters\BooleanInvertConverterConverter.cs" />
     <Compile Include="ValueConverters\BooleanToVisibilityGoneConverter.cs" />
     <Compile Include="ValueConverters\IconTypeToFontAwesomeConverter.cs" />
@@ -175,16 +176,16 @@
     <Compile Include="ViewModels\Chat\ChatMessage\ChatMessageListViewModel.cs" />
     <Compile Include="ViewModels\Chat\ChatMessage\Design\ChatMessageListDesignViewModel.cs" />
     <Compile Include="ViewModels\Chat\ChatMessage\Design\ChatMessageListItemDesignViewModel.cs" />
-    <Compile Include="ViewModels\Chat\Dialogs\BaseDialogViewModel.cs" />
-    <Compile Include="ViewModels\Chat\Dialogs\Design\MessageBoxDialogDesignViewModel.cs" />
-    <Compile Include="ViewModels\Chat\Dialogs\MessageBoxDialogViewModel.cs" />
-    <Compile Include="ViewModels\Chat\Menus\Design\VerticalMenuDesignViewModel.cs" />
-    <Compile Include="ViewModels\Chat\Menus\Design\VerticalMenuItemDesignViewModel.cs" />
-    <Compile Include="ViewModels\Chat\Menus\VerticalMenuItemViewModel.cs" />
-    <Compile Include="ViewModels\Chat\Menus\VerticalMenuViewModel.cs" />
-    <Compile Include="ViewModels\Chat\PopupMenus\AttachmentPopupMenuViewModel.cs" />
-    <Compile Include="ViewModels\Chat\PopupMenus\Design\AttachmentPopupMenuDesignViewModel.cs" />
-    <Compile Include="ViewModels\Chat\PopupMenus\PopupMenuViewModel.cs" />
+    <Compile Include="ViewModels\Dialogs\BaseDialogViewModel.cs" />
+    <Compile Include="ViewModels\Dialogs\Design\MessageBoxDialogDesignViewModel.cs" />
+    <Compile Include="ViewModels\Dialogs\MessageBoxDialogViewModel.cs" />
+    <Compile Include="ViewModels\Menus\Design\VerticalMenuDesignViewModel.cs" />
+    <Compile Include="ViewModels\Menus\Design\VerticalMenuItemDesignViewModel.cs" />
+    <Compile Include="ViewModels\Menus\VerticalMenuItemViewModel.cs" />
+    <Compile Include="ViewModels\Menus\VerticalMenuViewModel.cs" />
+    <Compile Include="ViewModels\PopupMenus\AttachmentPopupMenuViewModel.cs" />
+    <Compile Include="ViewModels\PopupMenus\Design\AttachmentPopupMenuDesignViewModel.cs" />
+    <Compile Include="ViewModels\PopupMenus\PopupMenuViewModel.cs" />
     <Compile Include="ViewModels\Input\Design\PasswordEntryDesignViewModel.cs" />
     <Compile Include="ViewModels\Input\Design\TextEntryDesignViewModel.cs" />
     <Compile Include="ViewModels\Input\PasswordEntryViewModel.cs" />
@@ -376,7 +377,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Fody">
-      <Version>3.3.3</Version>
+      <Version>3.3.4</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

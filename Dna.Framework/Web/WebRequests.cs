@@ -25,7 +25,9 @@ namespace Dna
         public static async Task<HttpWebResponse> PostAsync(string url,
                                                             object content = null,
                                                             KnownContentSerializers sendType = KnownContentSerializers.Json,
-                                                            KnownContentSerializers returnType = KnownContentSerializers.Json)
+                                                            KnownContentSerializers returnType = KnownContentSerializers.Json,
+                                                            Action<HttpWebRequest> configureRequest = null,
+                                                            string bearerToken = null)
         {
             #region Setup Headers
 
@@ -40,6 +42,19 @@ namespace Dna
 
             //Set the content type
             request.ContentType = sendType.ToMimeString();
+
+            //Set up token, if any
+            if(bearerToken != null)
+            {
+                request.Headers.Add("Authorization", $"Bearer {bearerToken}");
+            }
+
+            #endregion
+
+            #region Configure HttpWebRequest
+
+            //Add custom configuration to Request object
+            configureRequest?.Invoke(request);
 
             #endregion
 
@@ -105,10 +120,12 @@ namespace Dna
         public static async Task<WebRequestResult<TResponse>> PostAsync<TResponse>(string url,
                                                             object content = null,
                                                             KnownContentSerializers sendType = KnownContentSerializers.Json,
-                                                            KnownContentSerializers returnType = KnownContentSerializers.Json)
+                                                            KnownContentSerializers returnType = KnownContentSerializers.Json,
+                                                            Action<HttpWebRequest> configureRequest = null,
+                                                            string bearerToken = null)
         {
             //Make the standard POST call first
-            var serverResponse = await PostAsync(url, content, sendType, returnType);
+            var serverResponse = await PostAsync(url, content, sendType, returnType, configureRequest, bearerToken);
 
             //Create a result
             var result = serverResponse.CreateWebRequestResult<TResponse>();
@@ -162,6 +179,50 @@ namespace Dna
             }
 
             return result;
+        }
+
+
+        /// <summary>
+        /// Issues a GET request to the specified URL, useful for checking INTERNET connection
+        /// </summary>
+        /// <param name="endpoint"></param>
+        /// <param name="configureRequest"></param>
+        /// <param name="bearerToken"></param>
+        /// <returns></returns>
+        public static async Task<HttpWebResponse> GetAsync(string endpoint, Action<HttpWebRequest> configureRequest = null, string bearerToken = null)
+        {
+            #region Setup
+
+            // Create the web request
+            var request = WebRequest.CreateHttp(endpoint);
+
+            // Make it a GET method
+            request.Method = HttpMethod.Get.ToString();
+
+            if (bearerToken != null)
+                request.Headers.Add(HttpRequestHeader.Authorization, $"Bearer {bearerToken}");
+
+            // Any custom work
+            configureRequest?.Invoke(request);
+
+            #endregion
+
+            // Wrap call...
+            try
+            {
+                // Return the raw server response
+                return await request.GetResponseAsync() as HttpWebResponse;
+            }
+            catch (WebException ex)
+            {
+                //If we got a response return a response
+                if (ex.Response is HttpWebResponse httpWebResponse)
+                    return httpWebResponse;
+
+                // Otherwise, we don't have any information to be able to return
+                // So re-throw
+                throw;
+            }
         }
     }
 }

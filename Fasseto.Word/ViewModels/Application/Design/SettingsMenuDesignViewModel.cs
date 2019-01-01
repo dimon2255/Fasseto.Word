@@ -17,7 +17,7 @@ namespace Fasseto.Word
 
         public SettingsMenuDesignViewModel()
         {
-            //Bind Settinds Control VMs
+            //Bind Settings Control VMs
             Firstname = new TextEntryViewModel()
             {
                 Label = "Firstname",

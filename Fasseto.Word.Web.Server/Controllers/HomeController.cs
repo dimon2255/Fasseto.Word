@@ -1,4 +1,5 @@
-﻿using Fasseto.Word.Web.Server;
+﻿using Fasseto.Word.Core;
+using Fasseto.Word.Web.Server;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -90,7 +91,7 @@ namespace Fasseto.Word.Web.Server.Controllers
         /// Create a single user for now
         /// </summary>
         /// <returns></returns>
-        [Route("create")]
+        [Route(WebRoutes.CreateUser)]
         public async Task<IActionResult> CreateUserAsync()
         {
             var result = await mUserManager.CreateAsync(new ApplicationUser()
@@ -106,24 +107,12 @@ namespace Fasseto.Word.Web.Server.Controllers
 
             return Content("Unable to create User", "text/html");
         }
-
+     
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        //Private Area
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [Route("private")]
-        public IActionResult Private()
-        {
-            return Content($"This is a private area. Welcome {HttpContext.User.Identity.Name}", "text/html");
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        [Route("logout")]
+        [Route(WebRoutes.SignOutUser)]
         public async Task<IActionResult> SignOutAsync()
         {
             await mSignInManager.SignOutAsync();
@@ -135,7 +124,7 @@ namespace Fasseto.Word.Web.Server.Controllers
         /// </summary>
         /// <param name="returnUrl">If login successful, URL to return to</param>
         /// <returns></returns>
-        [Route("login")]
+        [Route(WebRoutes.LoginUser)]
         public async Task<IActionResult> LoginAsyn(string returnUrl)
         {
             //Sign out user
@@ -156,22 +145,6 @@ namespace Fasseto.Word.Web.Server.Controllers
 
             return Content("Testing", "text/html");
         }
-
-        /// <summary>
-        /// Test method hello
-        /// </summary>
-        /// <returns></returns>
-        [Route("test")]
-        public SettingsDataModel Test([FromBody]SettingsDataModel model)
-        {
-            return new SettingsDataModel()
-            {
-                 Id = "some id",
-                 Name = "Dimitri",
-                 Value = "10"
-            };
-        }
-
 
         #endregion
 

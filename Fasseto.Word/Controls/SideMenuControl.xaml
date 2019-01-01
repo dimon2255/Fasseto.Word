@@ -31,12 +31,20 @@
 
                         <!-- Main Buttons -->
                         <StackPanel Grid.Column="0" Orientation="Horizontal">
+                            
                             <Button Style="{StaticResource IconButton}" 
-                                    Content="{StaticResource FontAwesomeChatIcon}"/>
+                                    Content="{StaticResource FontAwesomeChatIcon}"
+                                    Command="{Binding OpenChatCommand}"/>
+
                             <Button Style="{StaticResource IconButton}" 
-                                    Content="{StaticResource FontAwesomeUserIcon}"/>
+                                    Content="{StaticResource FontAwesomeUserIcon}"
+                                    Command="{Binding OpenContactsCommand}"
+                                    />
+                            
                             <Button Style="{StaticResource IconButton}" 
-                                    Content="{StaticResource FontAwesomePictureIcon}"/>
+                                    Content="{StaticResource FontAwesomePictureIcon}"
+                                    Command="{Binding OpenMediaCommand}"        
+                                    />
                         </StackPanel>
 
                         <!-- Settings Button -->

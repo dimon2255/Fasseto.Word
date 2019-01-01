@@ -33,5 +33,25 @@
         public string Email { get; set; }
 
         #endregion
+
+        #region Public Helpers
+
+        /// <summary>
+        /// Converts <see cref="UpdateUserProfileApiModel"/> to <see cref="LoginCredentialsDataModel"/>
+        /// </summary>
+        /// <returns></returns>
+        public LoginCredentialsDataModel ToLoginCredentialsDataModel()
+        {
+            return new LoginCredentialsDataModel()
+            {
+                Email = Email,
+                Firstname = FirstName,
+                Lastname = LastName,
+                Username = UserName,
+                Token = Token
+            };
+        }
+
+        #endregion
     }
 }

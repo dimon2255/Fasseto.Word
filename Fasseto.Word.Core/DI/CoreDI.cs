@@ -15,11 +15,6 @@ namespace Fasseto.Word.Core
         public static IFileManager FileManager => Framework.Service<IFileManager>();
 
         /// <summary>
-        /// Get the <see cref="ILogFactory"/> for logging
-        /// </summary>
-        public static ILogFactory Logger => Framework.Service<ILogFactory>();
-
-        /// <summary>
         /// Get the <see cref="ITaskManager"/> for Task ops
         /// </summary>
         public static ITaskManager TaskManager => Framework.Service<ITaskManager>();

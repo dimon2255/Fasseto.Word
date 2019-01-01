@@ -71,7 +71,7 @@ namespace Fasseto.Word
                 //await Task.Delay(1000);
 
                 var result = await WebRequests.PostAsync<ApiResponse<UserProfileDetailsApiModel>>(
-                                                                    "http://localhost:5000/api/login",
+                                                                    RouteHelpers.GetAbsoluteRoute(ApiRoutes.Login),
                                                                      new LoginCredentialsApiModel()
                                                                      {
                                                                          UsernameOrEmail = Email,

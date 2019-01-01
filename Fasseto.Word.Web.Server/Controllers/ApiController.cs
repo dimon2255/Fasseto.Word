@@ -13,7 +13,7 @@ namespace Fasseto.Word.Web.Server
     /// <summary>
     /// Manages the WebAPI calls
     /// </summary>
-  //  [AuthorizeToken]
+    [AuthorizeToken]
     public class ApiController : Controller
     {
         #region Private Properties
@@ -62,8 +62,8 @@ namespace Fasseto.Word.Web.Server
         /// </summary>
         /// <param name="registerCredentails">The registration details</param>
         /// <returns>Returns the result of the register request</returns>
-//        [AllowAnonymous]
-        [Route("api/register")]
+        [AllowAnonymous]
+        [Route(ApiRoutes.Register)]
         public async Task<ApiResponse<UserProfileDetailsApiModel>> RegisterAsync([FromBody] RegisterCredentialsApiModel registerCredentials)
         {
             var errorMessage = "Please provide all required details to register to an account";
@@ -97,17 +97,14 @@ namespace Fasseto.Word.Web.Server
 
             if (result.Succeeded)
             {
+                //Get the username
+                var username = registerCredentials.Username;
+
                 //Find newly created user, to send to the client DataStore
-                var UserIdentity = await mUserManager.FindByNameAsync(registerCredentials.Username);
+                var UserIdentity = await mUserManager.FindByNameAsync(username);
 
-                //Generate Email verification code
-                var emailVerifictionCode = await mUserManager.GenerateEmailConfirmationTokenAsync(user);
-
-                //Email the user verification code
-                var confirmationUrl = $"http://{Request.Host.Value}/api/verify/email/{HttpUtility.UrlEncode(UserIdentity.Id)}/{HttpUtility.UrlEncode(emailVerifictionCode)}";
-
-                //Send verification email.
-                await FassetoEmailSender.SendUserVerificationEmail(UserIdentity.UserName, UserIdentity.Email, confirmationUrl);
+                //Verify Email
+                await VerifyEmailAsync(UserIdentity);
 
                 //Return valid response
                 return new ApiResponse<UserProfileDetailsApiModel>()
@@ -135,22 +132,16 @@ namespace Fasseto.Word.Web.Server
 
 
         /// <summary>
-        /// Validates the email using token and userId provided in Url
+        /// Validates the email using token and userId provided in URL
         /// </summary>
         /// <returns></returns>
-        [Route("api/verify/email/{userId}/{emailToken}")]
+        [AllowAnonymous]
+        [Route(ApiRoutes.VerifyEmail)]
         [HttpGet]
         public async Task<IActionResult> VerifyEmailAsync(string userId, string emailToken)
         {
              //Get the User
             var user = await mUserManager.FindByIdAsync(userId);
-
-            //NOTE: Issue at the minute with URL Decoding that contains /'s does not replace them
-            //          https://github.com/aspnet/AspNetCore/issues/2669
-            //
-            // For now manually fix that
-
-            emailToken = emailToken.Replace("%2f", "/").Replace("%2F", "/");
 
             //if the user is null
             if (user == null)
@@ -171,8 +162,8 @@ namespace Fasseto.Word.Web.Server
         /// Logs the user in and Issues unique token for user to use for subsequent requests
         /// </summary>
         /// <returns>ApiResponse of LoginResultApiModel</returns>
-//        [AllowAnonymous]
-        [Route("api/login")]
+        [AllowAnonymous]
+        [Route(ApiRoutes.Login)]
         public async Task<ApiResponse<UserProfileDetailsApiModel>> LogInAsync([FromBody]LoginCredentialsApiModel loginCredentials)
         {
             //TODO: Localize all strings
@@ -229,7 +220,7 @@ namespace Fasseto.Word.Web.Server
         /// Returns the users profile details based on the authenticated user
         /// </summary>
         /// <returns></returns>
-        [Route("api/user/profile")]
+        [Route(ApiRoutes.GetUserProfile)]
         public async Task<ApiResponse<UserProfileDetailsApiModel>> GetUserProfileAsync()
         {
             //Get user claims
@@ -261,6 +252,7 @@ namespace Fasseto.Word.Web.Server
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
+        [Route(ApiRoutes.UpdateUserProfile)]
         public async Task<ApiResponse> UpdateUserProfileAsync([FromBody] UpdateUserProfileApiModel model)
         {
             #region Declare Variable
@@ -317,7 +309,12 @@ namespace Fasseto.Word.Web.Server
             //Attempts to commit changes to data store
             var result = await mUserManager.UpdateAsync(user);
 
-            //TODO: Email Sender
+            //Recheck users email
+            if (result.Succeeded && emailChanged)
+            {
+                 //Verify Email
+                await VerifyEmailAsync(user);
+            }
 
             #endregion
 
@@ -334,6 +331,81 @@ namespace Fasseto.Word.Web.Server
             }
 
             #endregion
+
+        }
+
+
+        /// <summary>
+        /// Updates users password
+        /// </summary>
+        /// <param name="model">Model that holds the password value</param>
+        /// <returns></returns>
+        [Route(ApiRoutes.UpdateUserPassword)]
+        public async Task<ApiResponse> UpdateUserPasswordAsync([FromBody] UpdateUserPasswordApiModel model)
+        {
+            #region Declare Variable
+
+            //Create an empty list for errors
+            var errors = new List<string>();
+
+            #endregion
+
+            #region Get User
+
+            //Make the List of empty errors
+            var user = await mUserManager.GetUserAsync(HttpContext.User);
+
+            if (user == null)
+                return new ApiResponse<UserProfileDetailsApiModel>()
+                {
+                    ErrorMessage = "User not found"
+                };
+
+            #endregion
+
+            #region Update Password
+
+            //Attempts to change users password
+            var result = await mUserManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+
+            #endregion
+
+            #region Response
+
+            if (result.Succeeded)
+                return new ApiResponse();
+            else
+            {
+                return new ApiResponse()
+                {
+                    ErrorMessage = result.Errors.AggregateErrors()
+                };
+            }
+
+            #endregion
+
+        }
+
+
+        #endregion // End Of Controller Actions
+
+        #region  Private Action Helpers
+
+        /// <summary>
+        /// Generates a unique token and sends an email for verification purposes
+        /// </summary>
+        /// <param name="username">Users username</param>
+        /// <returns>Task proxy</returns>
+        private async Task VerifyEmailAsync(ApplicationUser UserIdentity)
+        {
+            //Generate Email verification code
+            var emailVerifictionCode = await mUserManager.GenerateEmailConfirmationTokenAsync(UserIdentity);
+
+            //Email the user verification code
+            var confirmationUrl = $"http://{Request.Host.Value}/api/verify/email?userId={HttpUtility.UrlEncode(UserIdentity.Id)}&emailToken={HttpUtility.UrlEncode(emailVerifictionCode)}";
+
+            //Send verification email.
+            await FassetoEmailSender.SendUserVerificationEmail(UserIdentity.UserName, UserIdentity.Email, confirmationUrl);
 
         }
 

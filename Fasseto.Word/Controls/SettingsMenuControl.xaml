@@ -6,7 +6,6 @@
              xmlns:local="clr-namespace:Fasseto.Word"
              mc:Ignorable="d"
              d:DataContext="{x:Static local:SettingsMenuDesignViewModel.Instance}"
-             DataContext="{x:Static local:DI.ViewModelSettings}"
                        >
 
     <Border Background="{StaticResource ForegroundLightBrush}"
@@ -66,17 +65,26 @@
                 
                 
                 <!-- Profile Picture -->
-                <Border CornerRadius="8" 
-                        Margin="0 0 15 0"
+                <Grid   Margin="0 0 15 0"
                         VerticalAlignment="Top"
                         Height="{Binding ActualWidth, 
                                                     RelativeSource={RelativeSource self}}">
-                    <Border.Background>
-                        <ImageBrush ImageSource="/Images/Samples/above-moscow.jpg"
-                                    Stretch="UniformToFill"
-                                    />
-                    </Border.Background>
-                </Border>
+                    <!-- Mask for rounded corners-->
+                    <Border CornerRadius="8"
+                            Name="Mask"
+                            Background="White"
+                            />
+
+                    <!-- Image -->
+                    <Grid>
+                        <Grid.OpacityMask>
+                            <VisualBrush Visual="{Binding ElementName=Mask}" />
+                        </Grid.OpacityMask>
+
+                        <Image Source="/Images/Samples/above-moscow.jpg" Stretch="UniformToFill" />
+                    </Grid>
+                    
+                </Grid>
                 
                 <!-- Profile Details -->
                 <StackPanel Grid.Column="1"

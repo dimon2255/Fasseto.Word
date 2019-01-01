@@ -16,7 +16,21 @@ namespace Fasseto.Word
         /// <returns></returns>
         public Task ShowMessage(MessageBoxDialogViewModel viewModel)
         {
-            return new DialogMessageBox().ShowDialog(viewModel);
+            var tcs = new TaskCompletionSource<bool>();
+
+            try
+            {
+                Application.Current.Dispatcher.Invoke(async () =>
+                {
+                    await new DialogMessageBox().ShowDialog(viewModel);
+                });
+            }
+            finally
+            {
+                tcs.TrySetResult(true);
+            }
+
+            return tcs.Task;
         }
     }
 }

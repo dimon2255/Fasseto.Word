@@ -21,7 +21,21 @@ namespace Fasseto.Word
 
         #endregion
 
+        #region Transactional Properties
+
+        /// <summary>
+        /// Indicates if the user is currently being logged in
+        /// </summary>
+        public bool LoggingIn { get; set; }
+
+        #endregion
+
         #region Public Properties
+
+        /// <summary>
+        /// Determines whether the server is reachable or not
+        /// </summary>
+        public bool ServerReachable{ get; set; }
 
         /// <summary>
         /// Indicates whether the side menu should be visible or not.
@@ -39,7 +53,7 @@ namespace Fasseto.Word
                 if (mSettingMenuVisible == value)
                     return;
 
-                    mSettingMenuVisible = value;
+                mSettingMenuVisible = value;
 
                 if (mSettingMenuVisible)
                     CoreDI.TaskManager.RunAndForget(ViewModelSettings.LoadAsync);
@@ -55,6 +69,11 @@ namespace Fasseto.Word
         /// The current page View Model to use when GoToPage is called
         /// </summary>
         public BaseViewModel CurrentPageViewModel { get; set; }
+
+        /// <summary>
+        /// Determines the current side menu content
+        /// </summary>
+        public SideMenuContent CurrentSideMenuContent { get; set; } = SideMenuContent.Chat;
 
         #endregion
 
@@ -89,22 +108,18 @@ namespace Fasseto.Word
         /// <returns></returns>
         public async Task HandleSuccessfulLoginAsync(UserProfileDetailsApiModel loginResult)
         {
-      
-            //Store this in client data store
-            await ClientDataStore.SaveLoginCredentialsAsync(new RegisterCredentialsDataModel()
+            //Lock the command ignore all others, while processing
+            await RunCommandAsync(() => LoggingIn, async () =>
             {
-                Email = loginResult.Email,
-                Firstname = loginResult.FirstName,
-                Lastname = loginResult.LastName,
-                Username = loginResult.UserName,
-                Token = loginResult.Token
+                //Store this in client data store
+                await ClientDataStore.SaveLoginCredentialsAsync(loginResult.ToLoginCredentialsDataModel());
+
+                //Load setting from the local Data Store
+                await ViewModelSettings.LoadAsync();
+
+                //Go to chat page
+                ViewModelApplication.GoToPage(ApplicationPage.Chat);
             });
-
-            //Load setting from the local Data Store
-            await ViewModelSettings.LoadAsync();
-
-            //Go to chat page
-            ViewModelApplication.GoToPage(ApplicationPage.Chat);
         }
     }
 }

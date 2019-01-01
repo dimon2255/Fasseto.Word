@@ -52,12 +52,18 @@
                                     </Grid.OpacityMask>
 
                                     <Grid.RowDefinitions>
-                                        <!-- Tital Bar-->
+                                        
+                                        <!-- Title Bar-->
                                         <RowDefinition Height="{Binding TitleHeightGridLength, 
                                                         FallbackValue=42}"/>
 
+                                        <!-- Internet Connection Bar -->
+                                        <RowDefinition Height="Auto"/>
+
                                         <!-- Window Content -->
                                         <RowDefinition Height="*"/>
+                                        
+                                        
                                     </Grid.RowDefinitions>
 
 
@@ -106,11 +112,31 @@
 
                                     </Grid>
 
+                                    <!-- No Internet Connection Bar -->
+                                    <Border 
+                                        Background="{StaticResource WordOrangeBrush}"
+                                        Grid.Row="1"
+                                        Padding="10"
+                                        Panel.ZIndex="1"
+                                        local:AnimateSlideInFromTopProperty.Value="{Binding 
+                                        ServerReachable, 
+                                        Source={x:Static local:ViewModelLocator.ApplicationViewModel}, 
+                                        Converter={local:BooleanInvertConverterConverter}}"
+                                        >
+
+                                        <Label HorizontalAlignment="Center"
+                                               FontFamily="{StaticResource LatoBold}"
+                                               Foreground="{StaticResource ForegroundLightBrush}"
+                                               >No Internet connection. Please check your network</Label>
+
+                                    </Border>
+
 
                                     <!-- Page Content -->
-                                    <Border Grid.Row="1" Padding="{Binding InnerContentPadding}">
+                                    <Border Grid.Row="2" Padding="{Binding InnerContentPadding}">
                                         <ContentPresenter Content="{TemplateBinding Content}" ClipToBounds="True"/>
                                     </Border>
+                                    
                                 </Grid>
 
                             </Grid>
@@ -178,14 +204,16 @@
 
              <!-- Side Menu Control -->
             <local:SideMenuControl Width="300" 
-             local:AnimateSlideInFromLeftProperty.Value="{Binding ApplicationViewModel.SideMenuVisible, Source={x:Static local:ViewModelLocator.Instance}}">
-                
-                
-                 <local:ChatList/>
+              local:AnimateSlideInFromLeftProperty.Value="{Binding ApplicationViewModel.SideMenuVisible, Source={x:Static local:ViewModelLocator.Instance}}"
+              Content="{Binding ApplicationViewModel.CurrentSideMenuContent, Source={x:Static local:ViewModelLocator.Instance}, Converter={local:SideMenuContentConverter}}"                                  
+                                   />
 
-            </local:SideMenuControl>    
-            
-            
+
+
+
+
+
+
         </Grid>
     </Border>
 </Window>
