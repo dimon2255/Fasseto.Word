@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Security.Claims;
 using System.Text;
 
 namespace Fasseto.Word.Web.Server
@@ -94,6 +95,23 @@ namespace Fasseto.Word.Web.Server
                 options.ExpireTimeSpan = TimeSpan.FromSeconds(1500);
             });
 
+
+            //Adds authorization policy
+            services.AddAuthorization(options =>
+            {
+                //Adds a Canadian Only Policy
+                options.AddPolicy("CanadiansOnly", policy =>
+                {
+                    policy.RequireClaim(ClaimTypes.Country, "Canada");
+                });
+
+                //Add roles to Authorization Policy
+                options.AddPolicy("SuperUser", configure =>
+                {
+                    configure.RequireRole(new string[] { "Admin", "Manager", "TechLead"});
+                });
+            });
+
             //Adds MVC Framework Compatible with .NET Core 2.2 version
             services.AddMvc(options =>
             {
@@ -109,9 +127,6 @@ namespace Fasseto.Word.Web.Server
         {
             //Pass the IServiceProvider reference for use in the whole application
             IoC.Init(app.ApplicationServices);
-
-            //Setup Identity 
-            app.UseAuthentication();
             
             if (env.IsDevelopment())
             {
@@ -123,6 +138,10 @@ namespace Fasseto.Word.Web.Server
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+
+            //Setup Identity 
+            app.UseAuthentication();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

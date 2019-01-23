@@ -50,6 +50,7 @@ namespace Fasseto.Word.Web.Server
             mDbcontext = context;
             mUserManager = userManager;
             mSignInManager = signInManager;
+
         }
 
         #endregion
@@ -63,6 +64,7 @@ namespace Fasseto.Word.Web.Server
         /// <param name="registerCredentails">The registration details</param>
         /// <returns>Returns the result of the register request</returns>
         [AllowAnonymous]
+        [HttpPost]
         [Route(ApiRoutes.Register)]
         public async Task<ApiResponse<UserProfileDetailsApiModel>> RegisterAsync([FromBody] RegisterCredentialsApiModel registerCredentials)
         {
@@ -136,8 +138,8 @@ namespace Fasseto.Word.Web.Server
         /// </summary>
         /// <returns></returns>
         [AllowAnonymous]
-        [Route(ApiRoutes.VerifyEmail)]
         [HttpGet]
+        [Route(ApiRoutes.VerifyEmail)]
         public async Task<IActionResult> VerifyEmailAsync(string userId, string emailToken)
         {
              //Get the User
@@ -163,6 +165,7 @@ namespace Fasseto.Word.Web.Server
         /// </summary>
         /// <returns>ApiResponse of LoginResultApiModel</returns>
         [AllowAnonymous]
+        [HttpPost]
         [Route(ApiRoutes.Login)]
         public async Task<ApiResponse<UserProfileDetailsApiModel>> LogInAsync([FromBody]LoginCredentialsApiModel loginCredentials)
         {
@@ -220,6 +223,7 @@ namespace Fasseto.Word.Web.Server
         /// Returns the users profile details based on the authenticated user
         /// </summary>
         /// <returns></returns>
+        [HttpPost]
         [Route(ApiRoutes.GetUserProfile)]
         public async Task<ApiResponse<UserProfileDetailsApiModel>> GetUserProfileAsync()
         {
@@ -252,6 +256,7 @@ namespace Fasseto.Word.Web.Server
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
+        [HttpPost]
         [Route(ApiRoutes.UpdateUserProfile)]
         public async Task<ApiResponse> UpdateUserProfileAsync([FromBody] UpdateUserProfileApiModel model)
         {
@@ -340,6 +345,7 @@ namespace Fasseto.Word.Web.Server
         /// </summary>
         /// <param name="model">Model that holds the password value</param>
         /// <returns></returns>
+        [HttpPost]
         [Route(ApiRoutes.UpdateUserPassword)]
         public async Task<ApiResponse> UpdateUserPasswordAsync([FromBody] UpdateUserPasswordApiModel model)
         {
