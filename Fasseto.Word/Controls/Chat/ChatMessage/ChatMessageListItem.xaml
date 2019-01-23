@@ -4,11 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Fasseto.Word"
-             xmlns:core="clr-namespace:Fasseto.Word.Core;assembly=Fasseto.Word.Core"
-             mc:Ignorable="d">
+              mc:Ignorable="d">
 
     <Border Padding="5"
-            d:DataContext="{x:Static core:ChatMessageListItemDesignViewModel.Instance}">
+            d:DataContext="{x:Static local:ChatMessageListItemDesignViewModel.Instance}">
         <Grid>
             
             <!-- Profile Picture -->
@@ -88,7 +87,7 @@
                                                         FallbackValue=Collapsed}"
                                />
                     </Border>
-                    <!-- Image Attachmment -->
+                    <!-- Image Attachment -->
                     <Border CornerRadius="10"
                             Margin="0 0 0 15"
                             MaxWidth="300"

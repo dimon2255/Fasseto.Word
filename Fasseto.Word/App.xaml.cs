@@ -1,6 +1,14 @@
-﻿using Fasseto.Word.Core;
-using System;
+﻿using Dna;
+using Fasseto.Word.Core;
+using Fasseto.Word.Relational;
+using System.Threading.Tasks;
 using System.Windows;
+
+//Static using for easy access of DI Services
+using static Fasseto.Word.DI;
+using static Dna.Framework;
+using System;
+using Dna.Web;
 
 namespace Fasseto.Word
 {
@@ -13,16 +21,20 @@ namespace Fasseto.Word
         /// Custom startup, we load our IoC container immediately before anything else
         /// </summary>
         /// <param name="e"></param>
-        protected override void OnStartup(StartupEventArgs e)
+        protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
             //Set up all application components
-            ApplicationSetup();
+            await ApplicationSetupAsync();
 
             //Log it
-            IoC.Logger.Log("Application starting...", LogLevel.Debug);
+            Logger.LogDebugSource("Application starting...");
 
+            ViewModelApplication.GoToPage(
+                await ClientDataStore.HasCredentialsAsync() ?
+                    ApplicationPage.Chat :
+                    ApplicationPage.Login);
 
             //Show the main window
             Current.MainWindow = new Dialog();
@@ -32,28 +44,44 @@ namespace Fasseto.Word
         /// <summary>
         /// Sets up all Application Components
         /// </summary>
-        private void ApplicationSetup()
+        private async Task ApplicationSetupAsync()
         {
-            // Setup IoC
-            IoC.Setup();
+            //Setup Dna Framework
+            Construct<DefaultFrameworkConstruction>()
+                    .AddFileLogger()
+                    .AddClientDataStore()
+                    .AddFassetoWordViewModels()
+                    .AddFassetoClientServices()
+                    .Build();
 
-            //Bind a logger
-            IoC.Kernel.Bind<ILogFactory>().ToConstant(new BaseLogFactory( new[]
+            //Register a service
+            await ClientDataStore.EnsureDataStoreAsync();
+
+            //Monitor for server connection status
+            MonitorServerStatus();
+
+            //Load new Settings, only if server is reachable
+            if (ViewModelApplication.ServerReachable)
             {
-                //TODO: Add AppicationSettings so we can set/edit a log location
-                //      for now just log to the path where this application is running
-                 new FileLogger("Log.txt")
-            }));
+                CoreDI.TaskManager.RunAndForget(ViewModelSettings.LoadAsync);
+            }
+        }
 
-            //Bind a TaskManager
-            IoC.Kernel.Bind<ITaskManager>().ToConstant(new TaskManager());
-
-            //Bind a FileManager
-            IoC.Kernel.Bind<IFileManager>().ToConstant(new FileManager());
-
-            //Bind a UIManager
-            IoC.Kernel.Bind<IUIManager>().ToConstant(new UIManager());
-
+        /// <summary>
+        /// Monitors if the server is up, so we can connect to it
+        /// </summary>
+        private void MonitorServerStatus()
+        {
+            //Create and endpoint checker 
+            var httpWatcher = new HttpEndPointChecker(
+                Configuration["FassetoWordServer:HostUrl"],
+                interval: 1000,
+                logger: Logger,
+                stateChangedCallback: (result) =>
+                {
+                    // Update the view model property with the new result
+                    ViewModelApplication.ServerReachable = result;
+                });
         }
     }
 }

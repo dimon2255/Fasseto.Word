@@ -10,77 +10,83 @@ namespace Fasseto.Word
     /// </summary>
     public class TextEntryWidthMatcherProperty : BaseAttachedProperty<TextEntryWidthMatcherProperty, bool>
     {
-        protected override void OnValueChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        protected override void OnValueChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            //Get the frame
+            // Get the panel (grid typically)
             var panel = (sender as Panel);
 
-            //Call SetWidths Initially (this also helps design time to work)
+            // Call SetWidths initially (this also helps design time to work)
             SetWidths(panel);
 
-            //Wait for panel to load
+            // Wait for panel to load
             RoutedEventHandler onLoaded = null;
-            onLoaded  = (s, e) =>
-             {
-                 //Unhook
-                 panel.Loaded -= onLoaded;
+            onLoaded = (s, ee) =>
+            {
+                // Unhook
+                panel.Loaded -= onLoaded;
 
-                 //SetWidths
-                 SetWidths(panel);
+                // Set widths
+                SetWidths(panel);
 
-                 //Loop each child
-                 foreach (FrameworkElement control in panel.Children)
-                 {
-                     if ((control is TextEntryControl))
-                     {
-                         var textentry = (TextEntryControl)control;
+                // Loop each child
+                foreach (var child in panel.Children)
+                {
+                    // Set it's margin to the given value
 
-                         textentry.Label.SizeChanged += (ee, ss) =>
-                         {
-                             SetWidths(panel);
-                         };
-                     }
-                 }
-             };
+                    // Ignore any non-text entry controls
+                    if (!(child is TextEntryControl) && !(child is PasswordEntryControl))
+                        continue;
 
-            //Pass a function pointer to panel Loaded
+                    // Get the label from the text entry or password entry
+                    var label = child is TextEntryControl ? (child as TextEntryControl).Label : (child as PasswordEntryControl).Label;
+
+                    label.SizeChanged += (ss, eee) =>
+                    {
+                        // Update widths
+                        SetWidths(panel);
+                    };
+                }
+            };
+
+            // Hook into the Loaded event
             panel.Loaded += onLoaded;
         }
 
         /// <summary>
-        /// Update all child TextEntry Controls, so their widths match the largets width in the group
+        /// Update all child text entry controls so their widths match the largest width of the group
         /// </summary>
+        /// <param name="panel">The panel containing the text entry controls</param>
         private void SetWidths(Panel panel)
         {
-            //Keep the track of the maximum width
+            // Keep track of the maximum width
             var maxSize = 0d;
 
-            //Loop each child and fin max width
+            // For each child...
             foreach (var child in panel.Children)
             {
-                if (child is TextEntryControl)
-                {
-                    var textentry = (TextEntryControl)child;
+                // Ignore any non-text entry controls
+                if (!(child is TextEntryControl) && !(child is PasswordEntryControl))
+                    continue;
 
-                    //Find Max size
-                    maxSize = Math.Max(maxSize, textentry.Label.RenderSize.Width + 
-                                                           textentry.Margin.Left + 
-                                                           textentry.Margin.Right);
+                // Get the label from the text entry or password entry
+                var label = child is TextEntryControl ? (child as TextEntryControl).Label : (child as PasswordEntryControl).Label;
 
-                }
-
+                // Find if this value is larger than the other controls
+                maxSize = Math.Max(maxSize, label.RenderSize.Width + label.Margin.Left + label.Margin.Right);
             }
 
-            //Loop each child and set the width to max value
+            // Create a grid length converter
+            var gridLength = (GridLength)new GridLengthConverter().ConvertFromString(maxSize.ToString());
+
+            // For each child...
             foreach (var child in panel.Children)
             {
-                if (child is TextEntryControl)
-                {
-                    var textentry = (TextEntryControl)child;
-
-                    textentry.LabelLength = (GridLength)new GridLengthConverter().ConvertFromString(maxSize.ToString());
-                    
-                }
+                if (child is TextEntryControl text)
+                    // Set each controls LabelWidth value to the max size
+                    text.LabelLength = gridLength;
+                else if (child is PasswordEntryControl pass)
+                    // Set each controls LabelWidth value to the max size
+                    pass.LabelLength = gridLength;
             }
 
         }

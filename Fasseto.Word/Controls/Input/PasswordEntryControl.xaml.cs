@@ -35,7 +35,7 @@ namespace Fasseto.Word
         #region Dependency Callbacks
 
         /// <summary>
-        /// Callaback function when dependency property has changed
+        /// Callback function when dependency property has changed
         /// </summary>
         /// <param name="d"></param>
         /// <param name="e"></param>

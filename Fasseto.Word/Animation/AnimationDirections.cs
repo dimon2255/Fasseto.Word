@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Fasseto.Word
 {
     /// <summary>
-    /// Enum For Sliding In
+    /// Enum For Sliding In Animation
     /// </summary>
     public enum AnimationSlideInDirection
     {

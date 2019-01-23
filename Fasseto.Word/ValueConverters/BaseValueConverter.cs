@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Markup;
 
 namespace Fasseto.Word
 {
     /// <summary>
-    /// A base value Converter thart allows direct XAML usage
+    /// A base value Converter that allows direct XAML usage
     /// </summary>
     /// <typeparam name="T">The type of the value converter</typeparam>
     public abstract class BaseValueConverter<T> : MarkupExtension, IValueConverter
@@ -27,7 +23,7 @@ namespace Fasseto.Word
         #region MarkupExtension Methods
 
         /// <summary>
-        /// Provides a static instance of the valkue converter
+        /// Provides a static instance of the value converter
         /// </summary>
         /// <param name="serviceProvider">The service provider</param>
         /// <returns></returns>
@@ -41,7 +37,7 @@ namespace Fasseto.Word
         #region Value Converter Methods
 
         /// <summary>
-        /// The method to cnvert one type to another
+        /// The method to convert one type to another
         /// </summary>
         /// <param name="value"></param>
         /// <param name="targetType"></param>

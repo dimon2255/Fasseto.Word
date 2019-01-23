@@ -24,7 +24,7 @@ namespace Fasseto.Word
 
 
         /// <summary>
-        /// Executes when value is upadated even if it is the same value
+        /// Executes when value is updated even if it is the same value
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="value"></param>
@@ -190,6 +190,26 @@ namespace Fasseto.Word
             {
                 //Animate out
                 await element.SlideAndFadeOutAsync(AnimationSlideOutDirection.Bottom, IsFirstLoad ? 0 : 0.3f, keepMargin: false);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Class lets us animate an element --> slide up from top to show, sliding out from top tp hide
+    /// </summary>
+    public class AnimateSlideInFromTopProperty : AnimateBaseProperty<AnimateSlideInFromTopProperty>
+    {
+        protected override async void DoAnimation(FrameworkElement element, bool value)
+        {
+            if (value)
+            {
+                //Animate in
+                await element.SlideAndFadeInAsync(AnimationSlideInDirection.Top, IsFirstLoad, IsFirstLoad ? 0 : 0.3f, keepMargin: false);
+            }
+            else
+            {
+                //Animate out
+                await element.SlideAndFadeOutAsync(AnimationSlideOutDirection.Top, IsFirstLoad ? 0 : 0.3f, keepMargin: false);
             }
         }
     }

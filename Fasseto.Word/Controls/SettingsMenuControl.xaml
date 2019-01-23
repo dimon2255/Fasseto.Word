@@ -4,10 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Fasseto.Word"
-             xmlns:core="clr-namespace:Fasseto.Word.Core;assembly=Fasseto.Word.Core"
              mc:Ignorable="d"
-             d:DataContext="{x:Static core:SettingsMenuDesignViewModel.Instance}"
-             DataContext="{x:Static core:IoC.Settings}"
+             d:DataContext="{x:Static local:SettingsMenuDesignViewModel.Instance}"
                        >
 
     <Border Background="{StaticResource ForegroundLightBrush}"
@@ -67,17 +65,26 @@
                 
                 
                 <!-- Profile Picture -->
-                <Border CornerRadius="8" 
-                        Margin="0 0 15 0"
+                <Grid   Margin="0 0 15 0"
                         VerticalAlignment="Top"
                         Height="{Binding ActualWidth, 
                                                     RelativeSource={RelativeSource self}}">
-                    <Border.Background>
-                        <ImageBrush ImageSource="/Images/Samples/above-moscow.jpg"
-                                    Stretch="UniformToFill"
-                                    />
-                    </Border.Background>
-                </Border>
+                    <!-- Mask for rounded corners-->
+                    <Border CornerRadius="8"
+                            Name="Mask"
+                            Background="White"
+                            />
+
+                    <!-- Image -->
+                    <Grid>
+                        <Grid.OpacityMask>
+                            <VisualBrush Visual="{Binding ElementName=Mask}" />
+                        </Grid.OpacityMask>
+
+                        <Image Source="/Images/Samples/above-moscow.jpg" Stretch="UniformToFill" />
+                    </Grid>
+                    
+                </Grid>
                 
                 <!-- Profile Details -->
                 <StackPanel Grid.Column="1"
@@ -86,6 +93,7 @@
                     
                     <local:TextEntryControl DataContext="{Binding Firstname}"/>
                     <local:TextEntryControl DataContext="{Binding Lastname}"/>
+                    <local:TextEntryControl DataContext="{Binding Username}"/>
                     <local:PasswordEntryControl DataContext="{Binding Password}"/>
                     <local:TextEntryControl DataContext="{Binding Email}"/>
 

@@ -3,10 +3,12 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 
+using static Fasseto.Word.DI;
+
 namespace Fasseto.Word
 {
     /// <summary>
-    /// Converters a string name to a service pulked from an IoC container
+    /// Converters a string name to a service pulled from an IoC container
     /// </summary>
     public class IoCConverter : BaseValueConverter<IoCConverter>
     {
@@ -16,7 +18,7 @@ namespace Fasseto.Word
             switch ((string)parameter)
             {
                 case nameof(ApplicationViewModel):
-                    return IoC.Application;
+                    return ViewModelApplication;
                 default:
                     Debugger.Break();
                     return null;

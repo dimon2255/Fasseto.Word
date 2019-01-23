@@ -9,7 +9,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>Fasseto.Word</RootNamespace>
     <AssemblyName>Fasseto.Word</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -18,6 +18,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -42,16 +43,7 @@
     <ApplicationIcon>Images\Logo\icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Windows.Shell, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Windows.Shell.3.0.1.0\lib\net40\Microsoft.Windows.Shell.dll</HintPath>
-    </Reference>
-    <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
-    </Reference>
     <Reference Include="PresentationFramework.Aero" />
-    <Reference Include="PropertyChanged, Version=2.6.0.0, Culture=neutral, PublicKeyToken=ee3ee20bcf148ddd, processorArchitecture=MSIL">
-      <HintPath>..\packages\PropertyChanged.Fody.2.6.0\lib\net452\PropertyChanged.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
@@ -128,7 +120,10 @@
     <Compile Include="Dialogs\DialogMessageBox.xaml.cs">
       <DependentUpon>DialogMessageBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="IoC\UIManager.cs" />
+    <Compile Include="DI\DI.cs" />
+    <Compile Include="DI\FrameworkConstructionExtensions.cs" />
+    <Compile Include="DI\UI\IUIManager.cs" />
+    <Compile Include="DI\UI\UIManager.cs" />
     <Compile Include="DialogWindow.xaml.cs">
       <DependentUpon>DialogWindow.xaml</DependentUpon>
     </Compile>
@@ -142,6 +137,7 @@
     <Compile Include="Pages\LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ValueConverters\SideMenuContentConverter.cs" />
     <Compile Include="ValueConverters\BooleanInvertConverterConverter.cs" />
     <Compile Include="ValueConverters\BooleanToVisibilityGoneConverter.cs" />
     <Compile Include="ValueConverters\IconTypeToFontAwesomeConverter.cs" />
@@ -156,9 +152,44 @@
     <Compile Include="ValueConverters\StringRGBToBrushConverter.cs" />
     <Compile Include="ValueConverters\TimeToReadTimeConverter.cs" />
     <Compile Include="ValueConverters\TimeToDisplayTimeConverter.cs" />
-    <Compile Include="ViewModels\DialogWindowViewModel.cs" />
-    <Compile Include="ViewModels\ViewModelLocator.cs" />
-    <Compile Include="ViewModels\WindowViewModel.cs" />
+    <Compile Include="WebRequests\WebRequestsResultExtensions.cs" />
+    <Compile Include="WPFViewModels\DialogWindowViewModel.cs" />
+    <Compile Include="WPFViewModels\ViewModelLocator.cs" />
+    <Compile Include="WPFViewModels\WindowViewModel.cs" />
+    <Compile Include="ViewModels\Application\ApplicationViewModel.cs" />
+    <Compile Include="ViewModels\Application\Design\SettingsMenuDesignViewModel.cs" />
+    <Compile Include="ViewModels\Application\LoginViewModel.cs" />
+    <Compile Include="ViewModels\Application\RegisterViewModel.cs" />
+    <Compile Include="ViewModels\Application\SettingsMenuViewModel.cs" />
+    <Compile Include="ViewModels\Application\SideMenuViewModel.cs" />
+    <Compile Include="ViewModels\Base\BaseViewModel.cs" />
+    <Compile Include="ViewModels\Base\IHavePassword.cs" />
+    <Compile Include="ViewModels\Base\RelayCommand.cs" />
+    <Compile Include="ViewModels\Base\RelayParameterizedCommand.cs" />
+    <Compile Include="ViewModels\Base\SecurePassword.cs" />
+    <Compile Include="ViewModels\Chat\ChatList\ChatListItemViewModel.cs" />
+    <Compile Include="ViewModels\Chat\ChatList\ChatListViewModel.cs" />
+    <Compile Include="ViewModels\Chat\ChatList\Design\ChatListDesignViewModel.cs" />
+    <Compile Include="ViewModels\Chat\ChatList\Design\ChatListItemDesignViewModel.cs" />
+    <Compile Include="ViewModels\Chat\ChatMessage\ChatMessageListItemImageAttachmentViewModel.cs" />
+    <Compile Include="ViewModels\Chat\ChatMessage\ChatMessageListItemViewModel.cs" />
+    <Compile Include="ViewModels\Chat\ChatMessage\ChatMessageListViewModel.cs" />
+    <Compile Include="ViewModels\Chat\ChatMessage\Design\ChatMessageListDesignViewModel.cs" />
+    <Compile Include="ViewModels\Chat\ChatMessage\Design\ChatMessageListItemDesignViewModel.cs" />
+    <Compile Include="ViewModels\Dialogs\BaseDialogViewModel.cs" />
+    <Compile Include="ViewModels\Dialogs\Design\MessageBoxDialogDesignViewModel.cs" />
+    <Compile Include="ViewModels\Dialogs\MessageBoxDialogViewModel.cs" />
+    <Compile Include="ViewModels\Menus\Design\VerticalMenuDesignViewModel.cs" />
+    <Compile Include="ViewModels\Menus\Design\VerticalMenuItemDesignViewModel.cs" />
+    <Compile Include="ViewModels\Menus\VerticalMenuItemViewModel.cs" />
+    <Compile Include="ViewModels\Menus\VerticalMenuViewModel.cs" />
+    <Compile Include="ViewModels\PopupMenus\AttachmentPopupMenuViewModel.cs" />
+    <Compile Include="ViewModels\PopupMenus\Design\AttachmentPopupMenuDesignViewModel.cs" />
+    <Compile Include="ViewModels\PopupMenus\PopupMenuViewModel.cs" />
+    <Compile Include="ViewModels\Input\Design\PasswordEntryDesignViewModel.cs" />
+    <Compile Include="ViewModels\Input\Design\TextEntryDesignViewModel.cs" />
+    <Compile Include="ViewModels\Input\PasswordEntryViewModel.cs" />
+    <Compile Include="ViewModels\Input\TextEntryViewModel.cs" />
     <Compile Include="Window\WindowResizer.cs" />
     <Page Include="Controls\Chat\ChatMessage\ChatMessageList.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -298,6 +329,9 @@
     <Resource Include="Fonts\Lato-Thin.ttf" />
     <Resource Include="Fonts\Lato-ThinItalic.ttf" />
     <Resource Include="Fonts\fontawesome-webfont.ttf" />
+    <None Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -322,9 +356,17 @@
     <Resource Include="Images\Backgrounds\emoji-background.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Dna.Framework\Dna.Framework.csproj">
+      <Project>{493f71bb-fcd0-44f0-a512-835190601067}</Project>
+      <Name>Dna.Framework</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Fasseto.Word.Core\Fasseto.Word.Core.csproj">
       <Project>{f35a19a7-7756-4109-bc1d-3c3cce0c6525}</Project>
       <Name>Fasseto.Word.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Fasseto.Word.Relational\Fasseto.Word.Relational.csproj">
+      <Project>{fdcff6e6-e45c-4229-9dca-4d9ebe7ed321}</Project>
+      <Name>Fasseto.Word.Relational</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -332,6 +374,19 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Samples\above-moscow.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Fody">
+      <Version>3.3.4</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite">
+      <Version>2.2.0</Version>
+    </PackageReference>
+    <PackageReference Include="PropertyChanged.Fody">
+      <Version>2.6.0</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Fody.3.3.2\build\Fody.targets" Condition="Exists('..\packages\Fody.3.3.2\build\Fody.targets')" />

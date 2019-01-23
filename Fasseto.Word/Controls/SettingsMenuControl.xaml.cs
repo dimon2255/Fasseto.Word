@@ -2,6 +2,8 @@
 using System.ComponentModel;
 using System.Windows.Controls;
 
+using static Fasseto.Word.DI;
+
 namespace Fasseto.Word
 {
     /// <summary>
@@ -12,6 +14,12 @@ namespace Fasseto.Word
         public SettingsMenuControl()
         {
             InitializeComponent();
+
+            if (DesignerProperties.GetIsInDesignMode(this))
+                DataContext = new SettingsMenuViewModel();
+            else
+                DataContext = ViewModelSettings;
+
         }
     }
 }
