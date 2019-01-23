@@ -4,7 +4,7 @@ using Fasseto.Word.Core;
 namespace Fasseto.Word
 {
     /// <summary>
-    ///Shorthand access class to get DI services with nice clean short code...
+    ///Shorthand access class to get DI services with nice clean short code.....
     /// </summary>
     public static class DI
     {
